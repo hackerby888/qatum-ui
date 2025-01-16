@@ -1,0 +1,70 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wdth,wght@0,75..100,100..900;1,75..100,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&family=Roboto:ital,wdth,wght@0,75..100,100..900;1,75..100,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Jura&family=Pixelify+Sans:wght@400..700&family=Roboto:ital,wdth,wght@0,75..100,100..900;1,75..100,100..900&display=swap');
+
+:root {
+  --q-main-color: #9C27B0;
+}
+
+:root {
+  --q-inactive-color: #b02727;
+}
+
+* {
+  font-family: "Pixelify Sans", serif;
+  box-sizing: border-box;
+}
+
+.roboto-font {
+  font-family: "Roboto", sans-serif;
+}
+
+.jura-font {
+  font-family: "Jura", sans-serif;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+html,body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#root {
+  height: 100%;
+  width: 100%;
+}
+
+button {
+  border: none;
+  outline: none;
+  cursor: pointer;
+}
+
+input {
+  border: none;
+  outline: none;
+}
+
+::-webkit-scrollbar {
+  height: 3px;
+  width: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #bdbdbd; /* fallback for old browsers */
+  border-radius: 20px;
+}
+
+::-webkit-scrollbar-track {
+  background: #ddd;
+  border-radius: 20px;
+}
+

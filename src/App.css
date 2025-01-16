@@ -1,0 +1,45 @@
+
+.lds-qatum,
+.lds-qatum div {
+  
+  box-sizing: border-box;
+}
+.lds-qatum {
+  display: inline-block;
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+.lds-qatum div {
+  display: inline-block;
+  position: absolute;
+  left: 8px;
+  width: 16px;
+  background: currentColor;
+  animation: lds-qatum 1s cubic-bezier(0, 0.5, 0.5, 1) infinite;
+  
+}
+.lds-qatum div:nth-child(1) {
+  left: 8px;
+  animation-delay: -0.24s;
+}
+.lds-qatum div:nth-child(2) {
+  left: 32px;
+  animation-delay: -0.12s;
+}
+.lds-qatum div:nth-child(3) {
+  left: 56px;
+  animation-delay: 0s;
+}
+
+@keyframes lds-qatum {
+  0% {
+    top: 8px;
+    height: 64px;
+  }
+  50%, 100% {
+    top: 24px;
+    height: 32px;
+  }
+}
+
