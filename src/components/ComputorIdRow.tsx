@@ -1,7 +1,7 @@
 import { Box } from "@mui/material";
 import QButton from "./QButton";
 import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
-import { ComputorId } from "../types";
+import { ComputorId, ComputorIdKeys } from "../types";
 import { memo, useEffect, useState } from "react";
 import QSelect from "./QSelect";
 import Dialog from "@mui/material/Dialog";
@@ -37,7 +37,9 @@ export default memo(function ComputorIdRow({
     isLastRow,
     setIds,
     setEditingIdIndex,
-    renderIndex,
+    // force react rerender when these props change
+    active,
+    followAvg,
 }: {
     index: number;
     data: ComputorId;
@@ -45,24 +47,20 @@ export default memo(function ComputorIdRow({
     isLastRow: boolean;
     setIds: any;
     setEditingIdIndex: any;
-    renderIndex: number;
+    active: boolean;
+    followAvg: boolean;
 }) {
     let globalIndex = index;
     let [idText, setIdText] = useState(data.id);
     let [isOpenningDialog, setIsOpenningDialog] = useState(false);
 
-    const handleOnTrueFalseSelectFollowAvg = (index: number) => {
+    const handleOnTrueFalseSelect = (
+        index: number,
+        field: "active" | "followAvg"
+    ) => {
         setIds((prev: ComputorId[]) => {
             let newArr = [...prev];
-            newArr[globalIndex].followAvg = trueFalseOptions[index].value;
-            return newArr;
-        });
-    };
-
-    const handleOnTrueFalseSelectActive = (index: number) => {
-        setIds((prev: ComputorId[]) => {
-            let newArr = [...prev];
-            newArr[globalIndex].active = trueFalseOptions[index].value;
+            newArr[globalIndex][field] = trueFalseOptions[index].value;
             return newArr;
         });
     };
@@ -91,10 +89,93 @@ export default memo(function ComputorIdRow({
     return (
         <>
             <Dialog
+                maxWidth="lg"
                 onClose={() => setIsOpenningDialog(false)}
                 open={isOpenningDialog}
             >
-                {idText}
+                <Box
+                    className="jura-font"
+                    sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        padding: "20px",
+                    }}
+                >
+                    {" "}
+                    <Box
+                        className="jura-font"
+                        sx={{
+                            fontWeight: "bold",
+                            paddingBottom: "5px",
+                        }}
+                    >
+                        {idText}
+                    </Box>
+                    <Box className="jura-font">
+                        Solutions Sent From Pool : 12
+                    </Box>
+                    <Box className="jura-font">
+                        Solutions Accepted On Node: 12312
+                    </Box>
+                    <Box className="jura-font">
+                        Solutions Written On BlockChain: 12312
+                    </Box>
+                    <Box>
+                        <Box
+                            sx={{
+                                width: "100%",
+                                display: "flex",
+                                justifyContent: "center",
+                                paddingY: "5px",
+                            }}
+                        >
+                            Wallet Stats
+                        </Box>
+                        <Box
+                            sx={{
+                                display: "flex",
+                                flexDirection: "column",
+                            }}
+                        >
+                            <Box
+                                className="jura-font"
+                                sx={{
+                                    paddingY: "5px",
+                                    opacity: 0.5,
+                                    fontSize: ".8rem",
+                                    width: "100%",
+                                    display: "flex",
+                                    justifyContent: "center",
+                                }}
+                            >
+                                ID Workers/Peformance Its
+                            </Box>
+                            {new Array(100).fill(0).map((_, index) => (
+                                <Box className="jura-font">
+                                    AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+                                    <span
+                                        className="jura-font"
+                                        style={{
+                                            marginLeft: "5px",
+                                            color: "var(--q-main-color)",
+                                        }}
+                                    >
+                                        121
+                                    </span>
+                                    /
+                                    <span
+                                        className="jura-font"
+                                        style={{
+                                            fontWeight: "bold",
+                                        }}
+                                    >
+                                        12321 Its
+                                    </span>{" "}
+                                </Box>
+                            ))}
+                        </Box>
+                    </Box>
+                </Box>
             </Dialog>{" "}
             <Box
                 sx={{
@@ -129,7 +210,9 @@ export default memo(function ComputorIdRow({
                     </Box>
                 )}
                 <QSelect
-                    onSelected={handleOnTrueFalseSelectActive}
+                    onSelected={(index) =>
+                        handleOnTrueFalseSelect(index, "active")
+                    }
                     text={trueFalseMap[String(data.active)].text}
                     isPlaceBottom={!isLastRow}
                     options={trueFalseOptions}
@@ -139,8 +222,9 @@ export default memo(function ComputorIdRow({
                     }}
                 />
                 <QSelect
-                    state={data.followAvg}
-                    onSelected={handleOnTrueFalseSelectFollowAvg}
+                    onSelected={(index) =>
+                        handleOnTrueFalseSelect(index, "followAvg")
+                    }
                     text={trueFalseMap[String(data.followAvg)].text}
                     isPlaceBottom={!isLastRow}
                     options={trueFalseOptions}

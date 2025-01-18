@@ -21,30 +21,26 @@ export default function IdManager() {
     let [renderTrigger, setRenderTrigger] = useState(0);
     let [ids, setIds] = useState<ComputorId[]>([]);
     let [editingIdIndex, setEditingIdIndex] = useState<number | null>(null);
-    let [currentSortKey, _setCurrentSortKey] = useState<string | null>(null);
-    const setCurrentSortKey = (key: string) => {
-        handleCancel();
-        setRenderTrigger((old) => old + 1);
-        _setCurrentSortKey(key);
-        sortMap[key] = sortMap[key] === "asc" ? "desc" : "asc";
-    };
-    const getSortedState = (key: string) => {
-        let newArr = [...ids].map((id, index) => ({
-            ...id,
-            index: index,
-        }));
-        if (!currentSortKey) return newArr;
-        newArr.sort((a, b) => {
-            if (sortMap[key] === "asc") {
-                // @ts-ignore
-                return a[key] > b[key] ? 1 : -1;
-            } else {
-                // @ts-ignore
-                return a[key] < b[key] ? 1 : -1;
-            }
-        });
 
-        return newArr;
+    const sort = (key: string) => {
+        setIds((prev) => {
+            console.log("sort", key, sortMap[key]);
+            let newArr = [...prev];
+            if (!key) return newArr;
+            let lastElement = editingIdIndex ? newArr.pop() : null;
+            newArr.sort((a, b) => {
+                if (sortMap[key] === "asc") {
+                    // @ts-ignore
+                    return a[key] > b[key] ? 1 : -1;
+                } else {
+                    // @ts-ignore
+                    return a[key] < b[key] ? 1 : -1;
+                }
+            });
+            if (lastElement) newArr.push(lastElement);
+            sortMap[key] = sortMap[key] === "asc" ? "desc" : "asc";
+            return newArr;
+        });
     };
 
     const handleCancel = () => {
@@ -63,10 +59,12 @@ export default function IdManager() {
 
     useEffect(() => {
         new Array(2).fill(0).map((_, index) => {
+            //random 1 to 9
+            let randomLength = Math.floor(Math.random() * 109) + 1;
             setIds((prev) => [
                 ...prev,
                 {
-                    id: `${index}GGNEEZYXQYTYFNFTLQYZKNNFMSCTBRSNZJIQGCXKAVVELCXQQQRMAKDDGOA`,
+                    id: `${randomLength}GGNEEZYXQYTYFNFTLQYZKNNFMSCTBRSNZJIQGCXKAVVELCXQQQRMAKDDGOA`,
                     active: Math.random() > 0.5,
                     followAvg: Math.random() > 0.5,
                     workers: Math.floor(Math.random() * 100),
@@ -76,10 +74,8 @@ export default function IdManager() {
         });
     }, []);
 
-    let renderIds = getSortedState(currentSortKey as string);
     let isThereUncompletedId = ids.some((id) => id.id.length < ID_LENGTH);
 
-    console.log(renderIds);
     return (
         <Box
             sx={{
@@ -178,7 +174,7 @@ export default function IdManager() {
                     >
                         {" "}
                         <Box
-                            onClick={() => setCurrentSortKey("id")}
+                            onClick={() => sort("id")}
                             sx={{
                                 width: "33%",
                                 overflowX: "hidden",
@@ -196,7 +192,7 @@ export default function IdManager() {
                             />
                         </Box>
                         <Box
-                            onClick={() => setCurrentSortKey("active")}
+                            onClick={() => sort("active")}
                             sx={{
                                 width: "7%",
                                 display: "flex",
@@ -213,7 +209,7 @@ export default function IdManager() {
                             />
                         </Box>
                         <Box
-                            onClick={() => setCurrentSortKey("followAvg")}
+                            onClick={() => sort("followAvg")}
                             sx={{
                                 width: "12%",
                                 display: "flex",
@@ -230,7 +226,7 @@ export default function IdManager() {
                             />
                         </Box>
                         <Box
-                            onClick={() => setCurrentSortKey("workers")}
+                            onClick={() => sort("workers")}
                             sx={{
                                 width: "15%",
                                 display: "flex",
@@ -246,9 +242,7 @@ export default function IdManager() {
                             />
                         </Box>
                         <Box
-                            onClick={() =>
-                                setCurrentSortKey("totalPerformance")
-                            }
+                            onClick={() => sort("totalPerformance")}
                             sx={{
                                 width: "20%",
                                 display: "flex",
@@ -279,14 +273,14 @@ export default function IdManager() {
                             overflowY: "scroll",
                         }}
                     >
-                        {renderIds.map((computorIdData, renderIndex) => (
+                        {ids.map((computorIdData, renderIndex) => (
                             <ComputorIdRow
+                                key={renderIndex + computorIdData.id}
+                                active={computorIdData.active}
+                                followAvg={computorIdData.followAvg}
                                 data={computorIdData}
-                                index={computorIdData.index}
-                                renderIndex={renderIndex}
-                                isEditing={
-                                    computorIdData.index === editingIdIndex
-                                }
+                                index={renderIndex}
+                                isEditing={renderIndex === editingIdIndex}
                                 isLastRow={renderIndex === ids.length - 1}
                                 setIds={setIds}
                                 setEditingIdIndex={setEditingIdIndex}

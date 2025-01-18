@@ -5,3 +5,5 @@ export interface ComputorId {
     workers: number;
     totalPerformance: number;
 }
+
+export type ComputorIdKeys = keyof ComputorId;

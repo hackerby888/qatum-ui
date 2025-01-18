@@ -7,7 +7,6 @@ export default function QSelect({
     isPlaceBottom,
     customCss,
     onSelected,
-    state,
 }: {
     text: string;
     isPlaceBottom: boolean;
@@ -17,7 +16,6 @@ export default function QSelect({
     }[];
     customCss?: SxProps<Theme>;
     onSelected?: (index: number) => void;
-    state?: any;
 }) {
     return (
         <Box
