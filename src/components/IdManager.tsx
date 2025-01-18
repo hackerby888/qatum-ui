@@ -6,24 +6,76 @@ import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
 import { ComputorId } from "../types";
 import ComputorIdRow from "./ComputorIdRow";
 
+const ID_LENGTH = 60;
+const sortMap: {
+    [key: string]: "asc" | "desc";
+} = {
+    id: "asc",
+    active: "asc",
+    followAvg: "asc",
+    workers: "asc",
+    totalPerformance: "asc",
+};
+
 export default function IdManager() {
+    let [renderTrigger, setRenderTrigger] = useState(0);
     let [ids, setIds] = useState<ComputorId[]>([]);
     let [editingIdIndex, setEditingIdIndex] = useState<number | null>(null);
 
+    const sort = (key: string) => {
+        setIds((prev) => {
+            console.log("sort", key, sortMap[key]);
+            let newArr = [...prev];
+            if (!key) return newArr;
+            let lastElement = editingIdIndex ? newArr.pop() : null;
+            newArr.sort((a, b) => {
+                if (sortMap[key] === "asc") {
+                    // @ts-ignore
+                    return a[key] > b[key] ? 1 : -1;
+                } else {
+                    // @ts-ignore
+                    return a[key] < b[key] ? 1 : -1;
+                }
+            });
+            if (lastElement) newArr.push(lastElement);
+            sortMap[key] = sortMap[key] === "asc" ? "desc" : "asc";
+            return newArr;
+        });
+    };
+
+    const handleCancel = () => {
+        //remove editing id index
+        if (editingIdIndex !== null) {
+            setIds((prev) => {
+                let newArr = [...prev].filter(
+                    (_, index) => index !== editingIdIndex
+                );
+                return newArr;
+            });
+
+            setEditingIdIndex(null);
+        }
+    };
+
     useEffect(() => {
-        new Array(10).fill(0).map((_, index) => {
+        new Array(2).fill(0).map((_, index) => {
+            //random 1 to 9
+            let randomLength = Math.floor(Math.random() * 109) + 1;
             setIds((prev) => [
                 ...prev,
                 {
-                    id: "RGGNEEZYXQYTYFNFTLQYZKNNFMSCTBRSNZJIQGCXKAVVELCXQQQRMAKDDGOA",
-                    active: true,
-                    followAvg: false,
-                    workers: 123,
-                    totalPerformance: 12312,
+                    id: `${randomLength}GGNEEZYXQYTYFNFTLQYZKNNFMSCTBRSNZJIQGCXKAVVELCXQQQRMAKDDGOA`,
+                    active: Math.random() > 0.5,
+                    followAvg: Math.random() > 0.5,
+                    workers: Math.floor(Math.random() * 100),
+                    totalPerformance: Math.floor(Math.random() * 100),
                 },
             ]);
         });
     }, []);
+
+    let isThereUncompletedId = ids.some((id) => id.id.length < ID_LENGTH);
+
     return (
         <Box
             sx={{
@@ -122,12 +174,15 @@ export default function IdManager() {
                     >
                         {" "}
                         <Box
+                            onClick={() => sort("id")}
                             sx={{
                                 width: "33%",
                                 overflowX: "hidden",
                                 marginLeft: "5px",
                                 display: "flex",
                                 alignItems: "center",
+                                cursor: "pointer",
+                                userSelect: "none",
                             }}
                         >
                             ID
@@ -137,11 +192,14 @@ export default function IdManager() {
                             />
                         </Box>
                         <Box
+                            onClick={() => sort("active")}
                             sx={{
                                 width: "7%",
                                 display: "flex",
                                 alignItems: "center",
                                 justifyContent: "center",
+                                cursor: "pointer",
+                                userSelect: "none",
                             }}
                         >
                             Active
@@ -151,11 +209,14 @@ export default function IdManager() {
                             />
                         </Box>
                         <Box
+                            onClick={() => sort("followAvg")}
                             sx={{
                                 width: "12%",
                                 display: "flex",
                                 alignItems: "center",
                                 justifyContent: "center",
+                                cursor: "pointer",
+                                userSelect: "none",
                             }}
                         >
                             Follow Avg
@@ -165,10 +226,13 @@ export default function IdManager() {
                             />
                         </Box>
                         <Box
+                            onClick={() => sort("workers")}
                             sx={{
                                 width: "15%",
                                 display: "flex",
                                 alignItems: "center",
+                                cursor: "pointer",
+                                userSelect: "none",
                             }}
                         >
                             Workers
@@ -178,10 +242,13 @@ export default function IdManager() {
                             />
                         </Box>
                         <Box
+                            onClick={() => sort("totalPerformance")}
                             sx={{
                                 width: "20%",
                                 display: "flex",
                                 alignItems: "center",
+                                cursor: "pointer",
+                                userSelect: "none",
                             }}
                         >
                             Total Performance
@@ -193,6 +260,7 @@ export default function IdManager() {
                         <Box
                             sx={{
                                 flex: 1,
+                                userSelect: "none",
                             }}
                         >
                             Action
@@ -205,174 +273,15 @@ export default function IdManager() {
                             overflowY: "scroll",
                         }}
                     >
-                        {ids.map((computorIdData, index) => (
-                            // <Box
-                            //     sx={{
-                            //         display: "flex",
-                            //         width: "100%",
-                            //         paddingY: "10px",
-                            //         borderTop: "1px solid black",
-                            //     }}
-                            // >
-                            //     {" "}
-                            //     {editingIdIndex === index ? (
-                            //         <input
-                            //             placeholder="Enter your id"
-                            //             style={{
-                            //                 marginLeft: "5px",
-                            //                 width: "33%",
-                            //             }}
-                            //         />
-                            //     ) : (
-                            //         <Box
-                            //             className="jura-font"
-                            //             sx={{
-                            //                 width: "33%",
-                            //                 overflowX: "scroll",
-                            //                 marginLeft: "5px",
-                            //             }}
-                            //         >
-                            //             {computorIdData.id}
-                            //         </Box>
-                            //     )}
-                            //     <Box
-                            //         sx={{
-                            //             width: "7%",
-                            //             color: "var(--q-main-color)",
-                            //             display: "flex",
-                            //             justifyContent: "center",
-                            //             cursor: "pointer",
-                            //             position: "relative",
-                            //             "&:hover div": {
-                            //                 display: "flex",
-                            //             },
-                            //         }}
-                            //     >
-                            //         {computorIdData.active ? "True" : "False"}
-
-                            //         <Box
-                            //             sx={{
-                            //                 position: "absolute",
-                            //                 top:
-                            //                     index === ids.length - 1
-                            //                         ? "-100%"
-                            //                         : "100%",
-                            //                 border: "1px solid #ccc",
-                            //                 background: "white",
-                            //                 borderRadius: "5px",
-                            //                 boxShadow: "0 0 5px 0 #ccc",
-                            //                 zIndex: 2,
-                            //                 left: 0,
-                            //                 right: 0,
-                            //                 bottom: 0,
-                            //                 display: "none",
-                            //                 alignItems: "center",
-                            //                 justifyContent: "center",
-                            //                 height: "fit-content",
-                            //                 flexDirection: "column",
-                            //             }}
-                            //         >
-                            //             <Box
-                            //                 sx={{
-                            //                     userSelect: "none",
-                            //                     "&:hover": {
-                            //                         fontWeight: "bold",
-                            //                     },
-                            //                 }}
-                            //             >
-                            //                 True
-                            //             </Box>
-                            //             <Box
-                            //                 sx={{
-                            //                     width: "100%",
-                            //                     height: "1px",
-                            //                     background: "#ccc",
-                            //                 }}
-                            //             ></Box>
-                            //             <Box
-                            //                 sx={{
-                            //                     userSelect: "none",
-                            //                     color: "red",
-                            //                     "&:hover": {
-                            //                         fontWeight: "bold",
-                            //                     },
-                            //                 }}
-                            //             >
-                            //                 False
-                            //             </Box>
-                            //         </Box>
-                            //     </Box>
-                            //     <Box
-                            //         sx={{
-                            //             width: "12%",
-                            //             color: "red",
-                            //             display: "flex",
-                            //             justifyContent: "center",
-                            //             cursor: "pointer",
-                            //         }}
-                            //     >
-                            //         {computorIdData.followAvg
-                            //             ? "True"
-                            //             : "False"}
-                            //     </Box>
-                            //     <Box
-                            //         className="jura-font"
-                            //         sx={{
-                            //             width: "15%",
-                            //         }}
-                            //     >
-                            //         {computorIdData.workers}
-                            //     </Box>
-                            //     <Box
-                            //         className="jura-font"
-                            //         sx={{
-                            //             width: "20%",
-                            //         }}
-                            //     >
-                            //         {computorIdData.totalPerformance || 0} It/s
-                            //     </Box>
-                            //     <Box
-                            //         sx={{
-                            //             flex: 1,
-                            //             display: "flex",
-                            //         }}
-                            //     >
-                            //         {editingIdIndex === index ? (
-                            //             <QButton
-                            //                 customCss={{
-                            //                     width: "fit-content",
-                            //                 }}
-                            //                 text="Confirm"
-                            //             />
-                            //         ) : (
-                            //             <>
-                            //                 <QButton
-                            //                     customCss={{
-                            //                         width: "fit-content",
-                            //                     }}
-                            //                     text="Detail"
-                            //                 />
-                            //                 <QButton
-                            //                     // effect3d={false}
-                            //                     // effect2dHoverColor="red"
-                            //                     customCss={{
-                            //                         width: "fit-content",
-                            //                         paddingX: "3px",
-                            //                         marginLeft: "5px",
-                            //                     }}
-                            //                     text=""
-                            //                 >
-                            //                     <DeleteOutlineRoundedIcon />
-                            //                 </QButton>
-                            //             </>
-                            //         )}
-                            //     </Box>
-                            // </Box>
+                        {ids.map((computorIdData, renderIndex) => (
                             <ComputorIdRow
+                                key={renderIndex + computorIdData.id}
+                                active={computorIdData.active}
+                                followAvg={computorIdData.followAvg}
                                 data={computorIdData}
-                                index={index}
-                                isEditing={index === editingIdIndex}
-                                isLastRow={index === ids.length - 1}
+                                index={renderIndex}
+                                isEditing={renderIndex === editingIdIndex}
+                                isLastRow={renderIndex === ids.length - 1}
                                 setIds={setIds}
                                 setEditingIdIndex={setEditingIdIndex}
                             />
@@ -407,17 +316,16 @@ export default function IdManager() {
                             }}
                             effect3d={false}
                             text="Add New Id"
+                            isDisabled={isThereUncompletedId}
                         />
                         <QButton
+                            onClick={handleCancel}
                             customCss={{
                                 marginX: "5px",
-                                opacity: editingIdIndex === null ? 0.5 : 1,
                             }}
                             effect3d={false}
-                            effect2dHoverColor={
-                                editingIdIndex === null ? "black" : ""
-                            }
                             text="Cancel"
+                            isDisabled={editingIdIndex === null}
                         />
                         <QButton
                             customCss={{

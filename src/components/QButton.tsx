@@ -8,6 +8,7 @@ export default function QButton({
     onClick,
     children,
     effect2dHoverColor,
+    isDisabled,
 }: {
     text: string;
     customCss?: SxProps<Theme>;
@@ -15,14 +16,16 @@ export default function QButton({
     onClick?: () => void;
     children?: React.ReactNode;
     effect2dHoverColor?: string;
+    isDisabled?: boolean;
 }) {
     return (
         <Box
-            onClick={onClick}
+            onClick={isDisabled ? () => {} : onClick}
             sx={{
+                opacity: isDisabled ? 0.5 : 1,
                 userSelect: "none",
                 position: "relative",
-                cursor: "pointer",
+                cursor: isDisabled ? "not-allowed" : "pointer",
                 display: "flex",
                 alignItems: "center",
                 background: "black",
@@ -43,7 +46,9 @@ export default function QButton({
                           right: "-2px",
                       }
                     : {},
-                "&:hover": effect3d
+                "&:hover": isDisabled
+                    ? {}
+                    : effect3d
                     ? {
                           transform: "translateY(2px) translateX(2px)",
                           "&:after": {
