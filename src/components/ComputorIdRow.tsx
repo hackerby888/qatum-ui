@@ -48,6 +48,7 @@ export default memo(function ComputorIdRow({
     let [isOpenningDialog, setIsOpenningDialog] = useState(false);
     let [showSnackbar, setShowSnackbar] = useState(false);
     let [snackbarMessage, setSnackbarMessage] = useState("");
+
     const handleOnTrueFalseSelect = (
         option: QSelectOptions,
         field: "active" | "followAvg"
@@ -60,6 +61,8 @@ export default memo(function ComputorIdRow({
             newArr[globalIndex][field] = option.value;
             return newArr;
         });
+
+        console.log(field, option);
     };
 
     const handleOnpenAndSetSnackbar = (message: string) => {
@@ -222,6 +225,7 @@ export default memo(function ComputorIdRow({
                     </Box>
                 )}
                 <QSelect
+                    value={active}
                     onSelected={(option) =>
                         handleOnTrueFalseSelect(option, "active")
                     }
@@ -232,6 +236,7 @@ export default memo(function ComputorIdRow({
                     }}
                 />
                 <QSelect
+                    value={followAvg}
                     onSelected={(option) =>
                         handleOnTrueFalseSelect(option, "followAvg")
                     }

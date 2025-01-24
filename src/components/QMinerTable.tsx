@@ -142,7 +142,7 @@ export default function QMinerTable() {
                 }}
             >
                 {new Array(100).fill(0).map((_, i) => (
-                    <QMinerRow index={i} />
+                    <QMinerRow key={i} index={i} />
                 ))}
             </Box>
         </Box>

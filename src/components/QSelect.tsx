@@ -1,7 +1,7 @@
 import { Theme } from "@emotion/react";
 import { Box, SxProps } from "@mui/material";
 import { QSelectOptions } from "../types";
-import { useState } from "react";
+import React, { useState } from "react";
 import ArrowDropDownRoundedIcon from "@mui/icons-material/ArrowDropDownRounded";
 import ArrowDropUpRoundedIcon from "@mui/icons-material/ArrowDropUpRounded";
 export default function QSelect({
@@ -10,7 +10,9 @@ export default function QSelect({
     customCss,
     listWrapperCustomCss,
     onSelected,
+    value,
 }: {
+    value?: any | null;
     isPlaceBottom: boolean;
     options: QSelectOptions[];
     customCss?: SxProps<Theme>;
@@ -18,7 +20,9 @@ export default function QSelect({
     onSelected?: (options: QSelectOptions) => void;
 }) {
     let [selected, setSelected] = useState<QSelectOptions | null>(
-        options.find((option) => option.isDefault) || options[0]
+        options.find((option) => option.value === value) ||
+            options.find((option) => option.isDefault) ||
+            options[0]
     );
     return (
         //@ts-ignore
@@ -35,7 +39,7 @@ export default function QSelect({
                 ...customCss,
             }}
         >
-            {selected?.text}
+            {value?.text || selected?.text}
             <ArrowDropDownRoundedIcon fontSize="small" />
             <Box
                 sx={{
@@ -66,7 +70,7 @@ export default function QSelect({
                     }}
                 >
                     {options.map((option, index) => (
-                        <>
+                        <React.Fragment key={index}>
                             <Box
                                 onClick={() => {
                                     setSelected(option);
@@ -100,7 +104,7 @@ export default function QSelect({
                             ) : (
                                 <> </>
                             )}
-                        </>
+                        </React.Fragment>
                     ))}
                 </Box>
             </Box>

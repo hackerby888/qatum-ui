@@ -57,6 +57,7 @@ function App() {
                             item.replace(/ /g, "").toLowerCase() === page;
                         return (
                             <Box
+                                key={item}
                                 onClick={() =>
                                     setPage(
                                         item.replace(/ /g, "").toLowerCase()

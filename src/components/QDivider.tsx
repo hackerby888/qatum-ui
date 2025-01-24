@@ -20,6 +20,7 @@ export default function QDivider({ py }: { py: string }) {
 
                     return (
                         <Box
+                            key={i}
                             sx={{
                                 height: "8px",
                                 width: "1%",
@@ -44,6 +45,7 @@ export default function QDivider({ py }: { py: string }) {
 
                     return (
                         <Box
+                            key={i}
                             sx={{
                                 height: "8px",
                                 width: "1%",

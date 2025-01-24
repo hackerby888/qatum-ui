@@ -58,7 +58,7 @@ export default function IdManager() {
     };
 
     useEffect(() => {
-        new Array(2).fill(0).map((_, index) => {
+        new Array(7).fill(0).map((_, index) => {
             //random 1 to 9
             let randomLength = Math.floor(Math.random() * 109) + 1;
             setIds((prev) => [
@@ -75,6 +75,8 @@ export default function IdManager() {
     }, []);
 
     let isThereUncompletedId = ids.some((id) => id.id.length < ID_LENGTH);
+
+    console.log(ids);
 
     return (
         <Box
@@ -275,7 +277,7 @@ export default function IdManager() {
                     >
                         {ids.map((computorIdData, renderIndex) => (
                             <ComputorIdRow
-                                key={renderIndex + computorIdData.id}
+                                key={computorIdData.id}
                                 active={computorIdData.active}
                                 followAvg={computorIdData.followAvg}
                                 data={computorIdData}
