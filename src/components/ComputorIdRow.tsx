@@ -1,35 +1,28 @@
 import { Box } from "@mui/material";
 import QButton from "./QButton";
 import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
-import { ComputorId, ComputorIdKeys } from "../types";
+import { ComputorId, ComputorIdKeys, QSelectOptions } from "../types";
 import { memo, useEffect, useState } from "react";
 import QSelect from "./QSelect";
 import Dialog from "@mui/material/Dialog";
-const trueFalseMap: {
-    [key: string]: {
-        text: string;
-        color: string;
-        value: boolean;
-    };
-} = {
-    true: {
+import Snackbar from "@mui/material/Snackbar";
+
+const trueFalseOptions: QSelectOptions[] = [
+    {
         text: "True",
-        color: "var(--q-main-color)",
         value: true,
+        customCss: {
+            color: "var(--q-main-color)",
+        },
     },
-    false: {
+    {
         text: "False",
-        color: "red",
         value: false,
+        customCss: {
+            color: "red",
+        },
     },
-};
-
-const trueFalseOptions: {
-    text: string;
-    color: string;
-    value: boolean;
-}[] = Object.keys(trueFalseMap).map((key) => trueFalseMap[key]);
-
+];
 export default memo(function ComputorIdRow({
     data,
     index,
@@ -53,16 +46,29 @@ export default memo(function ComputorIdRow({
     let globalIndex = index;
     let [idText, setIdText] = useState(data.id);
     let [isOpenningDialog, setIsOpenningDialog] = useState(false);
-
+    let [showSnackbar, setShowSnackbar] = useState(false);
+    let [snackbarMessage, setSnackbarMessage] = useState("");
     const handleOnTrueFalseSelect = (
-        index: number,
+        option: QSelectOptions,
         field: "active" | "followAvg"
     ) => {
+        handleOnpenAndSetSnackbar(
+            `Set ${field.normalize()} to ${option.text} for id ${idText}`
+        );
         setIds((prev: ComputorId[]) => {
             let newArr = [...prev];
-            newArr[globalIndex][field] = trueFalseOptions[index].value;
+            newArr[globalIndex][field] = option.value;
             return newArr;
         });
+    };
+
+    const handleOnpenAndSetSnackbar = (message: string) => {
+        setSnackbarMessage(message);
+        setShowSnackbar(true);
+    };
+
+    const handleOnCloseSnackbar = () => {
+        setShowSnackbar(false);
     };
 
     const handleOnDelete = () => {
@@ -177,6 +183,12 @@ export default memo(function ComputorIdRow({
                     </Box>
                 </Box>
             </Dialog>{" "}
+            <Snackbar
+                open={showSnackbar}
+                autoHideDuration={5000}
+                onClose={handleOnCloseSnackbar}
+                message={snackbarMessage}
+            />
             <Box
                 sx={{
                     display: "flex",
@@ -202,7 +214,7 @@ export default memo(function ComputorIdRow({
                         className="jura-font"
                         sx={{
                             width: "33%",
-                            overflowX: "scroll",
+                            overflowX: "auto",
                             marginLeft: "5px",
                         }}
                     >
@@ -210,27 +222,23 @@ export default memo(function ComputorIdRow({
                     </Box>
                 )}
                 <QSelect
-                    onSelected={(index) =>
-                        handleOnTrueFalseSelect(index, "active")
+                    onSelected={(option) =>
+                        handleOnTrueFalseSelect(option, "active")
                     }
-                    text={trueFalseMap[String(data.active)].text}
                     isPlaceBottom={!isLastRow}
                     options={trueFalseOptions}
                     customCss={{
                         width: "7%",
-                        color: trueFalseMap[String(data.active)].color,
                     }}
                 />
                 <QSelect
-                    onSelected={(index) =>
-                        handleOnTrueFalseSelect(index, "followAvg")
+                    onSelected={(option) =>
+                        handleOnTrueFalseSelect(option, "followAvg")
                     }
-                    text={trueFalseMap[String(data.followAvg)].text}
                     isPlaceBottom={!isLastRow}
                     options={trueFalseOptions}
                     customCss={{
                         width: "12%",
-                        color: trueFalseMap[String(data.followAvg)].color,
                     }}
                 />
                 <Box

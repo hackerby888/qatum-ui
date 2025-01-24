@@ -270,7 +270,7 @@ export default function IdManager() {
                         sx={{
                             width: "100%",
                             maxHeight: "70vh",
-                            overflowY: "scroll",
+                            overflowY: "auto",
                         }}
                     >
                         {ids.map((computorIdData, renderIndex) => (

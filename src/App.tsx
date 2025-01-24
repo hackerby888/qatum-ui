@@ -5,6 +5,7 @@ import QDivider from "./components/QDivider";
 import Stats from "./components/Stats";
 import Footer from "./components/Footer";
 import IdManager from "./components/IdManager";
+import PaymentManager from "./components/PaymentManager";
 
 function App() {
     const [page, setPage] = useState("stats");
@@ -85,7 +86,13 @@ function App() {
                         height: "100%",
                     }}
                 >
-                    {{ stats: <Stats />, idmanager: <IdManager /> }[page]}
+                    {
+                        {
+                            stats: <Stats />,
+                            idmanager: <IdManager />,
+                            paymentmanager: <PaymentManager />,
+                        }[page]
+                    }
                 </Box>
             </Box>
 

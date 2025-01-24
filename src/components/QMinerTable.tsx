@@ -11,6 +11,9 @@ export default function QMinerTable() {
                     xs: ".8rem",
                     sm: "1rem",
                 },
+                boxShadow: "0px 0px 5px 0px #ccc",
+                padding: "10px",
+                borderRadius: "5px",
             }}
         >
             {/* title */}
@@ -134,11 +137,11 @@ export default function QMinerTable() {
             <Box
                 sx={{
                     paddingBottom: "10px",
-                    overflowY: "scroll",
+                    overflowY: "auto",
                     maxHeight: "50vh",
                 }}
             >
-                {new Array(1).fill(0).map((_, i) => (
+                {new Array(100).fill(0).map((_, i) => (
                     <QMinerRow index={i} />
                 ))}
             </Box>

@@ -1,23 +1,27 @@
 import { Theme } from "@emotion/react";
 import { Box, SxProps } from "@mui/material";
-
+import { QSelectOptions } from "../types";
+import { useState } from "react";
+import ArrowDropDownRoundedIcon from "@mui/icons-material/ArrowDropDownRounded";
+import ArrowDropUpRoundedIcon from "@mui/icons-material/ArrowDropUpRounded";
 export default function QSelect({
-    text,
     options,
     isPlaceBottom,
     customCss,
+    listWrapperCustomCss,
     onSelected,
 }: {
-    text: string;
     isPlaceBottom: boolean;
-    options: {
-        text: string;
-        color: string;
-    }[];
+    options: QSelectOptions[];
     customCss?: SxProps<Theme>;
-    onSelected?: (index: number) => void;
+    listWrapperCustomCss?: SxProps<Theme>;
+    onSelected?: (options: QSelectOptions) => void;
 }) {
+    let [selected, setSelected] = useState<QSelectOptions | null>(
+        options.find((option) => option.isDefault) || options[0]
+    );
     return (
+        //@ts-ignore
         <Box
             sx={{
                 display: "flex",
@@ -27,11 +31,12 @@ export default function QSelect({
                 "&:hover div": {
                     display: "flex",
                 },
+                ...selected?.customCss,
                 ...customCss,
             }}
         >
-            {text}
-
+            {selected?.text}
+            <ArrowDropDownRoundedIcon fontSize="small" />
             <Box
                 sx={{
                     position: "absolute",
@@ -39,11 +44,9 @@ export default function QSelect({
                     zIndex: 2,
                     left: "0",
                     right: "0",
-                    bottom: 0,
                     display: "none",
                     alignItems: "center",
                     justifyContent: "center",
-                    height: "fit-content",
                     flexDirection: "column",
                     width: "100%",
                 }}
@@ -56,24 +59,31 @@ export default function QSelect({
                         boxShadow: "0 0 5px 0 #ccc",
                         display: "flex",
                         flexDirection: "column",
+                        maxHeight: "40vh",
+                        overflowY: "auto",
+                        width: "fit-content",
+                        ...listWrapperCustomCss,
                     }}
                 >
-                    {" "}
                     {options.map((option, index) => (
                         <>
                             <Box
                                 onClick={() => {
-                                    onSelected && onSelected(index);
+                                    setSelected(option);
+                                    onSelected && onSelected(option);
                                 }}
                                 sx={{
                                     userSelect: "none",
+                                    height: "fit-content",
                                     "&:hover": {
                                         fontWeight: "bold",
                                     },
-                                    color: option.color,
-                                    width: "fit-content",
+                                    width: "100%",
                                     paddingY: "1px",
                                     paddingX: "15px",
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    ...option.customCss,
                                 }}
                             >
                                 {option.text}
@@ -82,10 +92,11 @@ export default function QSelect({
                                 <Box
                                     sx={{
                                         width: "100%",
-                                        height: "1px",
-                                        background: "#ccc",
+                                        borderBottom: "1px solid #ccc",
                                     }}
-                                ></Box>
+                                >
+                                    {" "}
+                                </Box>
                             ) : (
                                 <> </>
                             )}
