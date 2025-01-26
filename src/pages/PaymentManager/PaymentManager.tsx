@@ -1,7 +1,7 @@
 import { Box, Button, MenuItem, Select } from "@mui/material";
-import QSelect from "./QSelect";
 import { useState } from "react";
-import QButton from "./QButton";
+import QSelect from "@/components/QSelect";
+import QButton from "@/components/QButton";
 
 export default function PaymentManager() {
     let [epoch, setEpoch] = useState(0);

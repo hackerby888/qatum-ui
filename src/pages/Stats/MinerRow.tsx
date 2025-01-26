@@ -1,6 +1,16 @@
+import { QWorkerApi } from "@/types";
 import { Box } from "@mui/material";
+import ms from "ms";
 
-export default function QMinerRow({ index }: { index: number }) {
+export default function QMinerRow({
+    index,
+    data,
+    isShareModeEpoch,
+}: {
+    index: number;
+    data: QWorkerApi;
+    isShareModeEpoch: boolean;
+}) {
     return (
         <>
             {" "}
@@ -34,7 +44,7 @@ export default function QMinerRow({ index }: { index: number }) {
                         paddingY: "5px",
                     }}
                 >
-                    amdrxs-22
+                    {data.name}
                 </Box>
                 <Box
                     className="jura-font"
@@ -45,7 +55,9 @@ export default function QMinerRow({ index }: { index: number }) {
                         paddingY: "5px",
                     }}
                 >
-                    15
+                    {isShareModeEpoch
+                        ? data.solutionsShare
+                        : data.solutionsWritten}
                 </Box>
                 <Box
                     className="jura-font"
@@ -56,7 +68,7 @@ export default function QMinerRow({ index }: { index: number }) {
                         paddingY: "5px",
                     }}
                 >
-                    20
+                    {data?.hashrate}
                 </Box>
                 <Box
                     className="jura-font"
@@ -67,17 +79,17 @@ export default function QMinerRow({ index }: { index: number }) {
                         paddingY: "5px",
                     }}
                 >
-                    1h32p
+                    {ms(Date.now() - data.startTimestamp)}
                 </Box>
                 <Box
                     sx={{
                         width: "10%",
-                        color: "var(--q-main-color)",
+                        color: data.isActive ? "var(--q-main-color)" : "red",
                         textAlign: "center",
                         paddingY: "5px",
                     }}
                 >
-                    Active
+                    {data.isActive ? "Active" : "Inactive"}
                 </Box>
             </Box>
         </>

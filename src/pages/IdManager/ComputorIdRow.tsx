@@ -1,9 +1,9 @@
 import { Box } from "@mui/material";
-import QButton from "./QButton";
+import QButton from "@/components/QButton";
 import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
-import { ComputorId, ComputorIdKeys, QSelectOptions } from "../types";
+import { ComputorId, ComputorIdKeys, QSelectOptions } from "@/types";
 import { memo, useEffect, useState } from "react";
-import QSelect from "./QSelect";
+import QSelect from "@/components/QSelect";
 import Dialog from "@mui/material/Dialog";
 import Snackbar from "@mui/material/Snackbar";
 

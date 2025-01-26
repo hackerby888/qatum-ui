@@ -1,7 +1,15 @@
 import { Box } from "@mui/material";
-import QMinerRow from "./QMinerRow";
 import FilterListRoundedIcon from "@mui/icons-material/FilterListRounded";
-export default function QMinerTable() {
+import QMinerRow from "./MinerRow";
+import { GlobalStats, QWorkerApi } from "@/types";
+
+export default function QMinerTable({
+    workerStats,
+    globalStats,
+}: {
+    workerStats: QWorkerApi[];
+    globalStats: GlobalStats;
+}) {
     return (
         <Box
             sx={{
@@ -71,7 +79,7 @@ export default function QMinerTable() {
                         cursor: "pointer",
                     }}
                 >
-                    Solutions
+                    {globalStats?.isShareModeEpoch ? "Shares" : "Solutions"}
                     <FilterListRoundedIcon
                         sx={{ marginLeft: "3px", fontSize: "1rem" }}
                         fontSize="small"
@@ -141,8 +149,13 @@ export default function QMinerTable() {
                     maxHeight: "50vh",
                 }}
             >
-                {new Array(100).fill(0).map((_, i) => (
-                    <QMinerRow key={i} index={i} />
+                {workerStats?.map((worker, i) => (
+                    <QMinerRow
+                        isShareModeEpoch={globalStats?.isShareModeEpoch}
+                        data={worker}
+                        key={i}
+                        index={i}
+                    />
                 ))}
             </Box>
         </Box>

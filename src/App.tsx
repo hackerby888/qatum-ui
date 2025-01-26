@@ -1,11 +1,11 @@
 import { useState } from "react";
 import "./App.css";
 import { Box, Container, Divider } from "@mui/material";
-import QDivider from "./components/QDivider";
-import Stats from "./components/Stats";
+import QDivider from "./components/QPixelDivider";
 import Footer from "./components/Footer";
-import IdManager from "./components/IdManager";
-import PaymentManager from "./components/PaymentManager";
+import IdManager from "./pages/IdManager/IdManager";
+import PaymentManager from "./pages/PaymentManager/PaymentManager";
+import Stats from "./pages/Stats/Stats";
 
 function App() {
     const [page, setPage] = useState("stats");

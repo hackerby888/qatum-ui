@@ -1,7 +1,26 @@
 import { Box } from "@mui/material";
 import QButton from "./QButton";
+import { memo, useState } from "react";
 
-export default function QInput({ customCss }: { customCss: any }) {
+export default memo(function QInput({
+    customCss,
+    onCommit,
+    initialValue,
+}: {
+    customCss: any;
+    initialValue?: string;
+    onCommit?: (value: any) => void;
+}) {
+    let [inputValue, setInputValue] = useState(initialValue || "");
+
+    let handleInput = (e: any) => {
+        setInputValue(e.target.value);
+    };
+
+    let handleCommit = () => {
+        if (onCommit) onCommit(inputValue);
+    };
+
     return (
         <Box
             sx={{
@@ -10,6 +29,13 @@ export default function QInput({ customCss }: { customCss: any }) {
             }}
         >
             <input
+                //@ts-ignore
+                spellcheck={"false"}
+                value={inputValue}
+                onChange={handleInput}
+                onKeyDown={(e) => {
+                    if (e.key === "Enter") handleCommit();
+                }}
                 placeholder="Enter your wallet"
                 style={{
                     border: "1px solid black",
@@ -17,7 +43,7 @@ export default function QInput({ customCss }: { customCss: any }) {
                     flex: "1",
                 }}
             />
-            <QButton text="Enter" />
+            <QButton onClick={handleCommit} text="Enter" />
         </Box>
     );
-}
+});

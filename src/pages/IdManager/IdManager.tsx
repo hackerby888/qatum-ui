@@ -1,9 +1,9 @@
 import { Box } from "@mui/material";
-import QButton from "./QButton";
 import FilterListRoundedIcon from "@mui/icons-material/FilterListRounded";
 import { useEffect, useState } from "react";
 import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
-import { ComputorId } from "../types";
+import { ComputorId } from "@/types";
+import QButton from "@/components/QButton";
 import ComputorIdRow from "./ComputorIdRow";
 
 const ID_LENGTH = 60;
