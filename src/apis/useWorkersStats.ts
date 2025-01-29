@@ -1,5 +1,10 @@
 import { API_SERVER } from "@/consts/apiServer";
 import { useQuery } from "@tanstack/react-query";
+import handleApiResponse from "./handleApiResponse";
+
+export function getWorkersStatsQueryKey(wallet: string) {
+    return ["workers-stats", wallet];
+}
 
 export default function useWorkersStats({
     wallet,
@@ -14,7 +19,7 @@ export default function useWorkersStats({
             let res = await fetch(
                 `${API_SERVER}/workers?wallet=${wallet}&needActive=${needActive}`
             );
-            return res.json();
+            return handleApiResponse(res);
         },
-    }) as any;
+    });
 }

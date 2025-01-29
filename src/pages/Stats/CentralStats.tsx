@@ -1,12 +1,14 @@
+import useGlobalStats from "@/apis/useGlobalStats";
 import { GlobalStats } from "@/types";
 import formatNumber from "@/utils/number";
 import { Box } from "@mui/material";
 
-export default function CentralStats({
-    globalStats,
-}: {
-    globalStats: GlobalStats;
-}) {
+export default function CentralStats() {
+    let {
+        data: globalStats,
+    }: {
+        data: GlobalStats;
+    } = useGlobalStats();
     return (
         <Box
             sx={{

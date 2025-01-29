@@ -1,11 +1,15 @@
 import { Box } from "@mui/material";
 import QButton from "@/components/QButton";
 import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
-import { ComputorId, ComputorIdKeys, QSelectOptions } from "@/types";
-import { memo, useEffect, useState } from "react";
+import { ComputorIdDataApi, QSelectOptions } from "@/types";
+import { memo, useState } from "react";
 import QSelect from "@/components/QSelect";
 import Dialog from "@mui/material/Dialog";
 import Snackbar from "@mui/material/Snackbar";
+import { useQueryClient } from "@tanstack/react-query";
+import { getComputorIdsQueryKey } from "@/apis/useComputorIds";
+import useComputorIdDetail from "@/apis/useComputorIdDetail";
+import QLoadingCircle from "@/components/QLoadingCircle";
 
 const trueFalseOptions: QSelectOptions[] = [
     {
@@ -23,44 +27,78 @@ const trueFalseOptions: QSelectOptions[] = [
         },
     },
 ];
+
+let backupWorkersForDelete: {
+    [key: string]: number;
+} = {};
+
 export default memo(function ComputorIdRow({
     data,
-    index,
     isEditing,
     isLastRow,
-    setIds,
     setEditingIdIndex,
     // force react rerender when these props change
-    active,
-    followAvg,
+    mining,
+    followingAvgScore,
+    handleCancel,
+    setRerenderTrigger,
+    index,
 }: {
-    index: number;
-    data: ComputorId;
+    data: ComputorIdDataApi;
     isEditing: boolean;
     isLastRow: boolean;
-    setIds: any;
     setEditingIdIndex: any;
-    active: boolean;
-    followAvg: boolean;
+    mining: boolean;
+    followingAvgScore: boolean;
+    handleCancel: any;
+    setRerenderTrigger: any;
+    index: number;
 }) {
     let globalIndex = index;
+
     let [idText, setIdText] = useState(data.id);
     let [isOpenningDialog, setIsOpenningDialog] = useState(false);
     let [showSnackbar, setShowSnackbar] = useState(false);
     let [snackbarMessage, setSnackbarMessage] = useState("");
+    let {
+        data: computorIdDetail,
+        isFetching: isComputorIdDetailFetching,
+    }: {
+        data: {
+            walletArray: {
+                wallet: string;
+                hashrate: number;
+                workers: number;
+            }[];
+        };
+        isFetching: boolean;
+    } = useComputorIdDetail({
+        computorId: data.id,
+        enabled: isOpenningDialog,
+    }) as any;
+    let queryClient = useQueryClient();
 
     const handleOnTrueFalseSelect = (
         option: QSelectOptions,
-        field: "active" | "followAvg"
+        field: "mining" | "followingAvgScore"
     ) => {
         handleOnpenAndSetSnackbar(
             `Set ${field.normalize()} to ${option.text} for id ${idText}`
         );
-        setIds((prev: ComputorId[]) => {
-            let newArr = [...prev];
-            newArr[globalIndex][field] = option.value;
-            return newArr;
-        });
+
+        let currentIds = queryClient.getQueryData(
+            getComputorIdsQueryKey()
+        ) as ComputorIdDataApi[];
+
+        // let newIds = currentIds.map((id) => {
+        //     if (id.id === idText) {
+        //         id[field] = option.value;
+        //     }
+        //     return id;
+        // });
+
+        currentIds[globalIndex][field] = option.value;
+        queryClient.setQueryData(getComputorIdsQueryKey(), currentIds);
 
         console.log(field, option);
     };
@@ -75,11 +113,24 @@ export default memo(function ComputorIdRow({
     };
 
     const handleOnDelete = () => {
-        setIds((prev: ComputorId[]) => {
-            let newArr = [...prev];
-            newArr.splice(globalIndex, 1);
-            return newArr;
-        });
+        let currentIds = queryClient.getQueryData(
+            getComputorIdsQueryKey()
+        ) as ComputorIdDataApi[];
+
+        //set .workers = -1 to delete
+        // let newIds = currentIds.map((id) => {
+        //     if (id.id === data.id) {
+        //         if (!backupWorkersForDelete[id.id])
+        //             backupWorkersForDelete[id.id] = id.workers;
+        //         id.workers = -1;
+        //     }
+        //     return id;
+        // });
+
+        currentIds[globalIndex].workers = -1;
+
+        queryClient.setQueryData(getComputorIdsQueryKey(), currentIds);
+        setRerenderTrigger((prev: number) => prev + 1);
     };
 
     const handleIdChange = (e: any) => {
@@ -88,12 +139,22 @@ export default memo(function ComputorIdRow({
 
     const handleConfirm = () => {
         setEditingIdIndex(null);
-        setIds((prev: ComputorId[]) => {
-            let newArr = [...prev];
-            newArr[globalIndex].id = idText;
-            return newArr;
-        });
+
+        let currentIds = queryClient.getQueryData(
+            getComputorIdsQueryKey()
+        ) as ComputorIdDataApi[];
+
+        if (currentIds.some((id) => id.id === idText)) {
+            handleCancel();
+            return;
+        }
+
+        currentIds[globalIndex].id = idText;
+
+        queryClient.setQueryData(getComputorIdsQueryKey(), currentIds);
     };
+
+    if (data.workers === -1) return null;
 
     return (
         <>
@@ -121,13 +182,17 @@ export default memo(function ComputorIdRow({
                         {idText}
                     </Box>
                     <Box className="jura-font">
-                        Solutions Sent From Pool : 12
+                        Solutions From Pool (Total/Written On BlockChain) :{" "}
+                        {data.submittedSolutions.total}
+                        <span
+                            className="jura-font"
+                            style={{ color: "green", fontWeight: "bold" }}
+                        >
+                            /{data.submittedSolutions.isWrittenToBC}
+                        </span>
                     </Box>
                     <Box className="jura-font">
-                        Solutions Accepted On Node: 12312
-                    </Box>
-                    <Box className="jura-font">
-                        Solutions Written On BlockChain: 12312
+                        Total Solutions Written On BlockChain: {data.bcscore}
                     </Box>
                     <Box>
                         <Box
@@ -159,29 +224,44 @@ export default memo(function ComputorIdRow({
                             >
                                 ID Workers/Peformance Its
                             </Box>
-                            {new Array(100).fill(0).map((_, index) => (
-                                <Box className="jura-font">
-                                    AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-                                    <span
-                                        className="jura-font"
-                                        style={{
-                                            marginLeft: "5px",
-                                            color: "var(--q-main-color)",
-                                        }}
-                                    >
-                                        121
-                                    </span>
-                                    /
-                                    <span
-                                        className="jura-font"
-                                        style={{
-                                            fontWeight: "bold",
-                                        }}
-                                    >
-                                        12321 Its
-                                    </span>{" "}
+                            {!isComputorIdDetailFetching ? (
+                                computorIdDetail?.walletArray?.map(
+                                    (walletData, index) => (
+                                        <Box key={index} className="jura-font">
+                                            {walletData.wallet}
+                                            <span
+                                                className="jura-font"
+                                                style={{
+                                                    marginLeft: "5px",
+                                                    color: "var(--q-main-color)",
+                                                }}
+                                            >
+                                                {walletData.workers}
+                                            </span>
+                                            /
+                                            <span
+                                                className="jura-font"
+                                                style={{
+                                                    fontWeight: "bold",
+                                                }}
+                                            >
+                                                {walletData.hashrate} Its
+                                            </span>{" "}
+                                        </Box>
+                                    )
+                                )
+                            ) : (
+                                <Box
+                                    sx={{
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        transform: "scale(.8)",
+                                        paddingTop: "10px",
+                                    }}
+                                >
+                                    <QLoadingCircle />
                                 </Box>
-                            ))}
+                            )}
                         </Box>
                     </Box>
                 </Box>
@@ -225,9 +305,9 @@ export default memo(function ComputorIdRow({
                     </Box>
                 )}
                 <QSelect
-                    value={active}
+                    value={mining}
                     onSelected={(option) =>
-                        handleOnTrueFalseSelect(option, "active")
+                        handleOnTrueFalseSelect(option, "mining")
                     }
                     isPlaceBottom={!isLastRow}
                     options={trueFalseOptions}
@@ -236,9 +316,9 @@ export default memo(function ComputorIdRow({
                     }}
                 />
                 <QSelect
-                    value={followAvg}
+                    value={followingAvgScore}
                     onSelected={(option) =>
-                        handleOnTrueFalseSelect(option, "followAvg")
+                        handleOnTrueFalseSelect(option, "followingAvgScore")
                     }
                     isPlaceBottom={!isLastRow}
                     options={trueFalseOptions}
@@ -252,7 +332,7 @@ export default memo(function ComputorIdRow({
                         width: "15%",
                     }}
                 >
-                    {data.workers}
+                    {backupWorkersForDelete[data.id] || data.workers}
                 </Box>
                 <Box
                     className="jura-font"
@@ -260,7 +340,7 @@ export default memo(function ComputorIdRow({
                         width: "20%",
                     }}
                 >
-                    {data.totalPerformance || 0} It/s
+                    {data.totalHashrate || 0} It/s
                 </Box>
                 <Box
                     sx={{

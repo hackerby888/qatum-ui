@@ -6,23 +6,10 @@ import FinalStats from "./FinalStats";
 import CentralStats from "./CentralStats";
 import GraphStats from "./GraphStats";
 import Payments from "./Payments";
-import { GlobalStats, QWorkerApi } from "@/types";
-import useGlobalStats from "@/apis/useGlobalStats";
-import useWorkersStats from "@/apis/useWorkersStats";
 
 export default function Stats() {
     let [wallet, setWallet] = useState(localStorage.getItem("wallet") || "");
-    let {
-        data: workerStats,
-    }: {
-        data: QWorkerApi[];
-    } = useWorkersStats({ wallet, needActive: true });
 
-    let {
-        data: globalStats,
-    }: {
-        data: GlobalStats;
-    } = useGlobalStats();
     return (
         <Box
             sx={{
@@ -52,11 +39,11 @@ export default function Stats() {
                 }}
             >
                 {" "}
-                <CentralStats globalStats={globalStats} />
-                <GraphStats globalStats={globalStats} />
+                <CentralStats />
+                <GraphStats />
             </Box>
 
-            <QMinerTable globalStats={globalStats} workerStats={workerStats} />
+            <QMinerTable wallet={wallet} />
 
             <Box
                 sx={{
@@ -66,11 +53,8 @@ export default function Stats() {
                     flexDirection: { xs: "column", md: "row" },
                 }}
             >
-                <FinalStats
-                    globalStats={globalStats}
-                    workerStats={workerStats}
-                />
-                <Payments />
+                <FinalStats wallet={wallet} />
+                <Payments wallet={wallet} />
             </Box>
         </Box>
     );

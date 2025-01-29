@@ -1,10 +1,14 @@
-import { Box } from "@mui/material";
+import { Box, Snackbar } from "@mui/material";
 import FilterListRoundedIcon from "@mui/icons-material/FilterListRounded";
 import { useEffect, useState } from "react";
-import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
-import { ComputorId } from "@/types";
 import QButton from "@/components/QButton";
 import ComputorIdRow from "./ComputorIdRow";
+import useComputorIds, { getComputorIdsQueryKey } from "@/apis/useComputorIds";
+import { useQueryClient } from "@tanstack/react-query";
+import { ComputorIdDataApi } from "@/types";
+import QLoading from "@/components/QLoading";
+import useUpdateComputorIds from "@/apis/useUpdateComputorIds";
+import MiningStrategy from "./MiningStrategy";
 
 const ID_LENGTH = 60;
 const sortMap: {
@@ -17,328 +21,412 @@ const sortMap: {
     totalPerformance: "asc",
 };
 
-export default function IdManager() {
-    let [renderTrigger, setRenderTrigger] = useState(0);
-    let [ids, setIds] = useState<ComputorId[]>([]);
-    let [editingIdIndex, setEditingIdIndex] = useState<number | null>(null);
+let lastComputorIdData: ComputorIdDataApi[] = [];
 
-    const sort = (key: string) => {
-        setIds((prev) => {
-            console.log("sort", key, sortMap[key]);
-            let newArr = [...prev];
-            if (!key) return newArr;
-            let lastElement = editingIdIndex ? newArr.pop() : null;
-            newArr.sort((a, b) => {
-                if (sortMap[key] === "asc") {
-                    // @ts-ignore
-                    return a[key] > b[key] ? 1 : -1;
-                } else {
-                    // @ts-ignore
-                    return a[key] < b[key] ? 1 : -1;
-                }
-            });
-            if (lastElement) newArr.push(lastElement);
-            sortMap[key] = sortMap[key] === "asc" ? "desc" : "asc";
-            return newArr;
+export default function IdManager() {
+    let {
+        data: ids,
+        isFetching,
+    }: {
+        data: ComputorIdDataApi[];
+        isFetching: any;
+    } = useComputorIds() as any;
+    let {
+        mutate: updateComputorIds,
+        isPending: isUpdateComputorIdsPending,
+        isSuccess,
+        isError,
+        reset,
+        error,
+    } = useUpdateComputorIds();
+
+    let [editingIdIndex, setEditingIdIndex] = useState<number | null>(null);
+    let [_, setRerenderTrigger] = useState(0);
+    let [showSnackbar, setShowSnackbar] = useState(false);
+    let [snackbarMessage, setSnackbarMessage] = useState("");
+
+    let queryClient = useQueryClient();
+
+    const sort = (key: keyof ComputorIdDataApi) => {
+        let newArr = [...ids];
+        if (!key) return newArr;
+        let lastElement = editingIdIndex ? newArr.pop() : null;
+        newArr.sort((a, b) => {
+            if (sortMap[key] === "asc") {
+                // @ts-ignore
+                return a[key] > b[key] ? 1 : -1;
+            } else {
+                // @ts-ignore
+                return a[key] < b[key] ? 1 : -1;
+            }
         });
+        if (lastElement) newArr.push(lastElement);
+        sortMap[key] = sortMap[key] === "asc" ? "desc" : "asc";
+        queryClient.setQueryData(getComputorIdsQueryKey(), newArr);
+    };
+
+    const handleAddNewId = () => {
+        let newIds: ComputorIdDataApi[] = [
+            ...ids,
+            {
+                id: "",
+                mining: false,
+                followingAvgScore: false,
+                workers: 0,
+                totalHashrate: 0,
+                score: 0,
+                bcscore: 0,
+                ip: "",
+                lastUpdateScoreTime: 0,
+                solutionsFetched: 0,
+                submittedSolutions: {
+                    isWrittenToBC: 0,
+                    total: 0,
+                },
+                targetScore: undefined,
+            },
+        ];
+
+        queryClient.setQueryData(getComputorIdsQueryKey(), newIds);
+
+        setEditingIdIndex(ids?.length);
     };
 
     const handleCancel = () => {
         //remove editing id index
-        if (editingIdIndex !== null) {
-            setIds((prev) => {
-                let newArr = [...prev].filter(
-                    (_, index) => index !== editingIdIndex
-                );
-                return newArr;
+        if (editingIdIndex !== null || ids?.some((id) => id.workers === -1)) {
+            let newArr = [...ids].filter(
+                (_, index) => index !== editingIdIndex
+            );
+
+            newArr = newArr.map((id, _) => {
+                if (id.workers === -1) id.workers = 0;
+                return id;
             });
+
+            queryClient.setQueryData(getComputorIdsQueryKey(), newArr);
 
             setEditingIdIndex(null);
         }
     };
 
-    useEffect(() => {
-        new Array(7).fill(0).map((_, index) => {
-            //random 1 to 9
-            let randomLength = Math.floor(Math.random() * 109) + 1;
-            setIds((prev) => [
-                ...prev,
-                {
-                    id: `${randomLength}GGNEEZYXQYTYFNFTLQYZKNNFMSCTBRSNZJIQGCXKAVVELCXQQQRMAKDDGOA`,
-                    active: Math.random() > 0.5,
-                    followAvg: Math.random() > 0.5,
-                    workers: Math.floor(Math.random() * 100),
-                    totalPerformance: Math.floor(Math.random() * 100),
-                },
-            ]);
-        });
-    }, []);
+    const handleSaveUpdateToServer = () => {
+        //prepare data for server
+        let apiData = ids
+            .map((id) => {
+                //detect if changes are made
+                let lastData = lastComputorIdData.find(
+                    (data) => data.id === id.id
+                ) as ComputorIdDataApi;
+                if (!lastData) return id;
+                for (let key in id) {
+                    if (
+                        lastData &&
+                        lastData[key as keyof ComputorIdDataApi] !==
+                            id[key as keyof ComputorIdDataApi]
+                    ) {
+                        if (
+                            typeof id[key as keyof ComputorIdDataApi] !==
+                            "object"
+                        ) {
+                            return id;
+                        }
+                    }
+                }
+            })
+            .filter((id) => id);
 
-    let isThereUncompletedId = ids.some((id) => id.id.length < ID_LENGTH);
+        //send to server
+        console.log(apiData);
+        lastComputorIdData = structuredClone(ids);
+        //@ts-ignore
+        updateComputorIds({
+            computorIds: apiData,
+        });
+    };
+
+    const handleOnCloseSnackbar = () => {
+        setShowSnackbar(false);
+    };
+
+    const handleOnpenAndSetSnackbar = (message: string) => {
+        setSnackbarMessage(message);
+        setShowSnackbar(true);
+    };
+
+    let isThereUncompletedId = ids?.some((id) => id.id.length < ID_LENGTH);
+
+    let canCancel =
+        editingIdIndex !== null || ids?.some((id) => id.workers === -1);
+
+    // let numberOfDeletedIds = ids?.filter((id) => id.workers === -1).length;
+    let lastElementIndex = -1;
+    for (let i = ids?.length - 1; i >= 0; i--) {
+        if (ids[i].workers !== -1) {
+            lastElementIndex = i;
+            break;
+        }
+    }
 
     console.log(ids);
 
+    useEffect(() => {
+        if (ids && !lastComputorIdData.length) {
+            lastComputorIdData = structuredClone(ids);
+            console.log("lastComputorIdData", lastComputorIdData);
+
+            if (ids.length <= 1) {
+                handleAddNewId();
+            }
+        }
+    }, [ids]);
+
+    useEffect(() => {
+        if (isSuccess) {
+            handleOnpenAndSetSnackbar("Successfully updated");
+            reset();
+        } else if (isError) {
+            console.log(error);
+            handleOnpenAndSetSnackbar(`Error updating ${error}`);
+            reset();
+        }
+    }, [isSuccess, isError]);
+
     return (
-        <Box
-            sx={{
-                width: "100%",
-                height: "100%",
-                paddingTop: "20px",
-            }}
-        >
+        <>
+            <Snackbar
+                open={showSnackbar}
+                autoHideDuration={5000}
+                onClose={handleOnCloseSnackbar}
+                message={snackbarMessage}
+            />
             <Box
                 sx={{
                     width: "100%",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    flexDirection: "column",
+                    height: "100%",
+                    paddingTop: "20px",
                 }}
             >
-                {" "}
+                <MiningStrategy
+                    handleOnpenAndSetSnackbar={handleOnpenAndSetSnackbar}
+                />
                 <Box
                     sx={{
                         width: "100%",
-                        textAlign: "center",
-                        paddingY: "10px",
-                    }}
-                >
-                    Mining Strategy
-                </Box>
-                <Box
-                    sx={{
                         display: "flex",
-                        width: "100%",
                         justifyContent: "center",
+                        alignItems: "center",
+                        flexDirection: "column",
                     }}
                 >
                     <Box
                         sx={{
-                            padding: "12px",
-                            border: "1px solid black",
-                            borderRight: "none",
-                        }}
-                    >
-                        Avg Score: 122
-                    </Box>
-                    <input
-                        placeholder="Max It/s Difference Between Ids"
-                        style={{
-                            width: "33%",
-                            border: "1px solid black",
-                            padding: "12px",
-                        }}
-                    />
-                    <input
-                        placeholder="Max Solutions Difference Between Ids"
-                        style={{
-                            width: "33%",
-                            border: "1px solid black",
-                            borderLeft: "none",
-                            padding: "12px",
-                        }}
-                    />
-                    <QButton text="Save" />
-                </Box>
-            </Box>
-
-            <Box
-                sx={{
-                    width: "100%",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    flexDirection: "column",
-                }}
-            >
-                <Box
-                    sx={{
-                        width: "100%",
-                        textAlign: "center",
-                        paddingY: "10px",
-                    }}
-                >
-                    Computor Ids
-                </Box>
-
-                <Box
-                    sx={{
-                        width: "100%",
-                        border: "1px solid black",
-                    }}
-                >
-                    <Box
-                        sx={{
-                            display: "flex",
                             width: "100%",
+                            textAlign: "center",
                             paddingY: "10px",
                         }}
                     >
-                        {" "}
-                        <Box
-                            onClick={() => sort("id")}
-                            sx={{
-                                width: "33%",
-                                overflowX: "hidden",
-                                marginLeft: "5px",
-                                display: "flex",
-                                alignItems: "center",
-                                cursor: "pointer",
-                                userSelect: "none",
-                            }}
-                        >
-                            ID
-                            <FilterListRoundedIcon
-                                sx={{ marginLeft: "3px", fontSize: "1rem" }}
-                                fontSize="small"
-                            />
-                        </Box>
-                        <Box
-                            onClick={() => sort("active")}
-                            sx={{
-                                width: "7%",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                cursor: "pointer",
-                                userSelect: "none",
-                            }}
-                        >
-                            Active
-                            <FilterListRoundedIcon
-                                sx={{ marginLeft: "3px", fontSize: "1rem" }}
-                                fontSize="small"
-                            />
-                        </Box>
-                        <Box
-                            onClick={() => sort("followAvg")}
-                            sx={{
-                                width: "12%",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                cursor: "pointer",
-                                userSelect: "none",
-                            }}
-                        >
-                            Follow Avg
-                            <FilterListRoundedIcon
-                                sx={{ marginLeft: "3px", fontSize: "1rem" }}
-                                fontSize="small"
-                            />
-                        </Box>
-                        <Box
-                            onClick={() => sort("workers")}
-                            sx={{
-                                width: "15%",
-                                display: "flex",
-                                alignItems: "center",
-                                cursor: "pointer",
-                                userSelect: "none",
-                            }}
-                        >
-                            Workers
-                            <FilterListRoundedIcon
-                                sx={{ marginLeft: "3px", fontSize: "1rem" }}
-                                fontSize="small"
-                            />
-                        </Box>
-                        <Box
-                            onClick={() => sort("totalPerformance")}
-                            sx={{
-                                width: "20%",
-                                display: "flex",
-                                alignItems: "center",
-                                cursor: "pointer",
-                                userSelect: "none",
-                            }}
-                        >
-                            Total Performance
-                            <FilterListRoundedIcon
-                                sx={{ marginLeft: "3px", fontSize: "1rem" }}
-                                fontSize="small"
-                            />
-                        </Box>
-                        <Box
-                            sx={{
-                                flex: 1,
-                                userSelect: "none",
-                            }}
-                        >
-                            Action
-                        </Box>
+                        Computor Ids
                     </Box>
-                    <Box
-                        sx={{
-                            width: "100%",
-                            maxHeight: "70vh",
-                            overflowY: "auto",
-                        }}
-                    >
-                        {ids.map((computorIdData, renderIndex) => (
-                            <ComputorIdRow
-                                key={computorIdData.id}
-                                active={computorIdData.active}
-                                followAvg={computorIdData.followAvg}
-                                data={computorIdData}
-                                index={renderIndex}
-                                isEditing={renderIndex === editingIdIndex}
-                                isLastRow={renderIndex === ids.length - 1}
-                                setIds={setIds}
-                                setEditingIdIndex={setEditingIdIndex}
-                            />
-                        ))}
-                    </Box>
-                    <Box
-                        sx={{
-                            width: "100%",
-                            display: "flex",
-                            justifyContent: "flex-end",
-                            paddingY: "5px",
-                            borderTop: "2px solid black",
-                        }}
-                    >
-                        <QButton
-                            onClick={() => {
-                                setIds((prev) => [
-                                    ...prev,
-                                    {
-                                        id: "",
-                                        active: false,
-                                        followAvg: false,
-                                        workers: 0,
-                                        totalPerformance: 0,
-                                    },
-                                ]);
 
-                                setEditingIdIndex(ids.length);
+                    <Box
+                        sx={{
+                            width: "100%",
+                            border: "1px solid black",
+                        }}
+                    >
+                        <Box
+                            sx={{
+                                display: "flex",
+                                width: "100%",
+                                paddingY: "10px",
                             }}
-                            customCss={{
-                                marginX: "5px",
+                        >
+                            {" "}
+                            <Box
+                                onClick={() => sort("id")}
+                                sx={{
+                                    width: "33%",
+                                    overflowX: "hidden",
+                                    marginLeft: "5px",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    cursor: "pointer",
+                                    userSelect: "none",
+                                }}
+                            >
+                                ID
+                                <FilterListRoundedIcon
+                                    sx={{ marginLeft: "3px", fontSize: "1rem" }}
+                                    fontSize="small"
+                                />
+                            </Box>
+                            <Box
+                                onClick={() => sort("mining")}
+                                sx={{
+                                    width: "7%",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    cursor: "pointer",
+                                    userSelect: "none",
+                                }}
+                            >
+                                Active
+                                <FilterListRoundedIcon
+                                    sx={{ marginLeft: "3px", fontSize: "1rem" }}
+                                    fontSize="small"
+                                />
+                            </Box>
+                            <Box
+                                onClick={() => sort("followingAvgScore")}
+                                sx={{
+                                    width: "12%",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    cursor: "pointer",
+                                    userSelect: "none",
+                                }}
+                            >
+                                Follow Avg
+                                <FilterListRoundedIcon
+                                    sx={{ marginLeft: "3px", fontSize: "1rem" }}
+                                    fontSize="small"
+                                />
+                            </Box>
+                            <Box
+                                onClick={() => sort("workers")}
+                                sx={{
+                                    width: "15%",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    cursor: "pointer",
+                                    userSelect: "none",
+                                }}
+                            >
+                                Workers
+                                <FilterListRoundedIcon
+                                    sx={{ marginLeft: "3px", fontSize: "1rem" }}
+                                    fontSize="small"
+                                />
+                            </Box>
+                            <Box
+                                onClick={() => sort("totalHashrate")}
+                                sx={{
+                                    width: "20%",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    cursor: "pointer",
+                                    userSelect: "none",
+                                }}
+                            >
+                                Total Performance
+                                <FilterListRoundedIcon
+                                    sx={{ marginLeft: "3px", fontSize: "1rem" }}
+                                    fontSize="small"
+                                />
+                            </Box>
+                            <Box
+                                sx={{
+                                    flex: 1,
+                                    userSelect: "none",
+                                }}
+                            >
+                                Action
+                            </Box>
+                        </Box>
+                        <Box
+                            sx={{
+                                width: "100%",
+                                maxHeight: "70vh",
+                                overflowY: "auto",
                             }}
-                            effect3d={false}
-                            text="Add New Id"
-                            isDisabled={isThereUncompletedId}
-                        />
-                        <QButton
-                            onClick={handleCancel}
-                            customCss={{
-                                marginX: "5px",
+                        >
+                            {isFetching ? (
+                                <Box
+                                    sx={{
+                                        width: "100%",
+                                        display: "flex",
+                                        justifyContent: "center",
+                                    }}
+                                >
+                                    <QLoading />
+                                </Box>
+                            ) : (
+                                ids?.map((computorIdData, renderIndex) => (
+                                    <ComputorIdRow
+                                        index={renderIndex}
+                                        handleCancel={handleCancel}
+                                        key={computorIdData.id}
+                                        mining={computorIdData.mining}
+                                        followingAvgScore={
+                                            computorIdData.followingAvgScore
+                                        }
+                                        data={computorIdData}
+                                        isEditing={
+                                            renderIndex === editingIdIndex
+                                        }
+                                        isLastRow={
+                                            renderIndex === lastElementIndex
+                                        }
+                                        setEditingIdIndex={setEditingIdIndex}
+                                        setRerenderTrigger={setRerenderTrigger}
+                                    />
+                                ))
+                            )}
+                        </Box>
+                        <Box
+                            sx={{
+                                width: "100%",
+                                display: "flex",
+                                justifyContent: "flex-end",
+                                paddingY: "5px",
+                                borderTop: "2px solid black",
                             }}
-                            effect3d={false}
-                            text="Cancel"
-                            isDisabled={editingIdIndex === null}
-                        />
-                        <QButton
-                            customCss={{
-                                marginX: "5px",
-                            }}
-                            effect3d={false}
-                            text="Update"
-                        />
+                        >
+                            <QButton
+                                onClick={handleAddNewId}
+                                customCss={{
+                                    marginX: "5px",
+                                }}
+                                effect3d={false}
+                                text="Add New Id"
+                                isDisabled={isThereUncompletedId}
+                            />
+                            <QButton
+                                onClick={handleCancel}
+                                customCss={{
+                                    marginX: "5px",
+                                }}
+                                effect3d={false}
+                                text="Cancel"
+                                isDisabled={!canCancel}
+                            />
+                            {!isUpdateComputorIdsPending ? (
+                                <QButton
+                                    onClick={handleSaveUpdateToServer}
+                                    customCss={{
+                                        marginX: "5px",
+                                    }}
+                                    effect3d={false}
+                                    text="Update"
+                                />
+                            ) : (
+                                <QButton
+                                    onClick={handleSaveUpdateToServer}
+                                    customCss={{
+                                        marginX: "5px",
+                                    }}
+                                    isDisabled={true}
+                                    effect3d={false}
+                                    text="Updating..."
+                                />
+                            )}
+                        </Box>
                     </Box>
                 </Box>
             </Box>
-        </Box>
+        </>
     );
 }

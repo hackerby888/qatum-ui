@@ -30,7 +30,7 @@ export default memo(function QInput({
         >
             <input
                 //@ts-ignore
-                spellcheck={"false"}
+                spellCheck={"false"}
                 value={inputValue}
                 onChange={handleInput}
                 onKeyDown={(e) => {

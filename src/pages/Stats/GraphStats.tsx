@@ -1,3 +1,4 @@
+import useGlobalStats from "@/apis/useGlobalStats";
 import { ONE_DAY, THREE_MINUTES } from "@/consts/time";
 import { GlobalStats } from "@/types";
 import { Box } from "@mui/material";
@@ -23,12 +24,13 @@ function formaterDivide(val: number) {
     return `${(val / 1e12).toFixed(0)}T`;
 }
 
-export default function GraphStats({
-    globalStats,
-}: {
-    globalStats: GlobalStats;
-}) {
+export default function GraphStats() {
     let [graphHeight, setGraphHeight] = useState(0);
+    let {
+        data: globalStats,
+    }: {
+        data: GlobalStats;
+    } = useGlobalStats();
 
     useEffect(() => {
         let statsWrapper = document.getElementById("stats-main-wrapper");

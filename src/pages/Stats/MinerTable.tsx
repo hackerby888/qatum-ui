@@ -2,14 +2,60 @@ import { Box } from "@mui/material";
 import FilterListRoundedIcon from "@mui/icons-material/FilterListRounded";
 import QMinerRow from "./MinerRow";
 import { GlobalStats, QWorkerApi } from "@/types";
+import { v4 } from "uuid";
+import QLoading from "@/components/QLoading";
+import useWorkersStats, {
+    getWorkersStatsQueryKey,
+} from "@/apis/useWorkersStats";
+import useGlobalStats from "@/apis/useGlobalStats";
+import { useQueryClient } from "@tanstack/react-query";
 
-export default function QMinerTable({
-    workerStats,
-    globalStats,
-}: {
-    workerStats: QWorkerApi[];
-    globalStats: GlobalStats;
-}) {
+let sortMap = {
+    name: "asc",
+    shares: "asc",
+    solutionsWritten: "asc",
+    hashrate: "asc",
+    uptime: "asc",
+    isActive: "asc",
+};
+
+export default function QMinerTable({ wallet }: { wallet: string }) {
+    let {
+        data: workerStats,
+        isFetching,
+    }: {
+        data: QWorkerApi[];
+        isFetching: boolean;
+    } = useWorkersStats({ wallet, needActive: false }) as any;
+
+    let {
+        data: globalStats,
+    }: {
+        data: GlobalStats;
+    } = useGlobalStats();
+
+    let queryClient = useQueryClient();
+
+    const handleSort = (key: keyof QWorkerApi) => {
+        let queryKey = getWorkersStatsQueryKey(wallet);
+
+        let queryData = structuredClone(workerStats);
+
+        queryData.sort((a, b) => {
+            //@ts-ignore
+            if (sortMap[key] === "asc") {
+                return a[key] > b[key] ? 1 : -1;
+            } else {
+                return a[key] < b[key] ? 1 : -1;
+            }
+        });
+
+        // @ts-ignore
+        sortMap[key] = sortMap[key] === "asc" ? "desc" : "asc";
+
+        queryClient.setQueryData(queryKey, queryData);
+    };
+
     return (
         <Box
             sx={{
@@ -50,6 +96,7 @@ export default function QMinerTable({
                     #
                 </Box>
                 <Box
+                    onClick={() => handleSort("name")}
                     sx={{
                         userSelect: "none",
                         width: "30%",
@@ -68,6 +115,13 @@ export default function QMinerTable({
                     />
                 </Box>
                 <Box
+                    onClick={() =>
+                        handleSort(
+                            globalStats?.isShareModeEpoch
+                                ? "solutionsShare"
+                                : "solutionsWritten"
+                        )
+                    }
                     sx={{
                         userSelect: "none",
                         width: "15%",
@@ -86,6 +140,7 @@ export default function QMinerTable({
                     />
                 </Box>
                 <Box
+                    onClick={() => handleSort("hashrate")}
                     sx={{
                         userSelect: "none",
                         width: "15%",
@@ -104,6 +159,7 @@ export default function QMinerTable({
                     />
                 </Box>
                 <Box
+                    onClick={() => handleSort("startTimestamp")}
                     sx={{
                         userSelect: "none",
                         width: "25%",
@@ -122,6 +178,7 @@ export default function QMinerTable({
                     />
                 </Box>
                 <Box
+                    onClick={() => handleSort("isActive")}
                     sx={{
                         userSelect: "none",
                         width: "10%",
@@ -149,14 +206,27 @@ export default function QMinerTable({
                     maxHeight: "50vh",
                 }}
             >
-                {workerStats?.map((worker, i) => (
-                    <QMinerRow
-                        isShareModeEpoch={globalStats?.isShareModeEpoch}
-                        data={worker}
-                        key={i}
-                        index={i}
-                    />
-                ))}
+                {isFetching ? (
+                    <Box
+                        sx={{
+                            width: "100%",
+                            display: "flex",
+                            justifyContent: "center",
+                        }}
+                    >
+                        {" "}
+                        <QLoading />
+                    </Box>
+                ) : (
+                    workerStats?.map((worker, i) => (
+                        <QMinerRow
+                            isShareModeEpoch={globalStats?.isShareModeEpoch}
+                            data={worker}
+                            key={v4()}
+                            index={i}
+                        />
+                    ))
+                )}
             </Box>
         </Box>
     );

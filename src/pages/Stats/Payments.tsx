@@ -1,8 +1,25 @@
 import { Box } from "@mui/material";
 import HourglassTopRoundedIcon from "@mui/icons-material/HourglassTopRounded";
 import ArrowDropDownRoundedIcon from "@mui/icons-material/ArrowDropDownRounded";
+import usePaymentsHistory, { PAYMENTS_LIMIT } from "@/apis/usePaymentsHistory";
+import { PaymentDbDataWithReward } from "@/types";
+import formatNumber from "@/utils/number";
 
-export default function Payments() {
+export default function Payments({ wallet }: { wallet: string }) {
+    let {
+        data: payments,
+        isFetchingNextPage,
+        fetchNextPage,
+    }: {
+        data: {
+            pages: PaymentDbDataWithReward[][];
+        };
+        isFetchingNextPage: boolean;
+        fetchNextPage: () => void;
+    } = usePaymentsHistory({ wallet }) as any;
+    console.log(payments);
+    let isLastPage =
+        payments?.pages[payments?.pages.length - 1].length < PAYMENTS_LIMIT;
     return (
         <Box
             sx={{
@@ -28,59 +45,75 @@ export default function Payments() {
             >
                 Payments
             </Box>
-            {new Array(10).fill(0).map((_, i) => (
-                <Box
-                    key={i}
-                    sx={{
-                        display: "flex",
-                        justifyContent: "center",
-                        width: "100%",
-                        border: "1px solid #ccc",
-                        paddingY: "5px",
-                        paddingX: "5px",
-                        alignItems: "center",
-                        cursor: "pointer",
-                        "&:hover": {
-                            backgroundColor: "var(--q-main-color)",
-                            color: "white",
-                        },
-                    }}
-                >
+            {payments?.pages?.map((page, _) =>
+                page.map((payment, j) => (
                     <Box
+                        key={j}
                         sx={{
-                            display: "flex",
-                            alignItems: "center",
-                        }}
-                    >
-                        <HourglassTopRoundedIcon />
-                    </Box>
-                    <Box
-                        sx={{
-                            width: "100%",
                             display: "flex",
                             justifyContent: "center",
+                            width: "100%",
+                            border: "1px solid #ccc",
+                            paddingY: "5px",
+                            paddingX: "5px",
+                            alignItems: "center",
+                            cursor: "pointer",
+                            "&:hover": {
+                                backgroundColor: "var(--q-main-color)",
+                                color: "white",
+                            },
                         }}
                     >
-                        3,111,111 @ 300 Solutions
+                        <Box
+                            sx={{
+                                display: "flex",
+                                alignItems: "center",
+                            }}
+                        >
+                            <HourglassTopRoundedIcon />
+                        </Box>
+                        <Box
+                            sx={{
+                                width: "100%",
+                                display: "flex",
+                                justifyContent: "center",
+                            }}
+                        >
+                            {formatNumber(payment.reward)} @{" "}
+                            {payment.solutionsShare > 0
+                                ? `${payment.solutionsShare} Shares`
+                                : `${payment.solutionsWritten} Solutions`}
+                        </Box>
+                        <Box>E{payment.epoch}</Box>
                     </Box>
-                    <Box>E122</Box>
+                ))
+            )}
+            {!isLastPage ? (
+                <Box
+                    onClick={
+                        isFetchingNextPage ? () => {} : () => fetchNextPage()
+                    }
+                    sx={{
+                        paddingY: "5px",
+                        paddingX: "5px",
+                        display: "flex",
+                        justifyContent: "center",
+                        cursor: isFetchingNextPage ? "default" : "pointer",
+                        "&:hover": isFetchingNextPage
+                            ? {}
+                            : {
+                                  backgroundColor: "var(--q-main-color)",
+                                  color: "white",
+                              },
+                    }}
+                >
+                    {isFetchingNextPage ? (
+                        "Loading..."
+                    ) : (
+                        <ArrowDropDownRoundedIcon />
+                    )}
                 </Box>
-            ))}
-            <Box
-                sx={{
-                    paddingY: "5px",
-                    paddingX: "5px",
-                    display: "flex",
-                    justifyContent: "center",
-                    cursor: "pointer",
-                    "&:hover": {
-                        backgroundColor: "var(--q-main-color)",
-                        color: "white",
-                    },
-                }}
-            >
-                <ArrowDropDownRoundedIcon />
-            </Box>
+            ) : null}
         </Box>
     );
 }

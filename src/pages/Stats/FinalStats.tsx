@@ -1,14 +1,23 @@
+import useGlobalStats from "@/apis/useGlobalStats";
+import useWorkersStats from "@/apis/useWorkersStats";
 import Divider from "@/components/QDivider";
 import { GlobalStats, QWorkerApi } from "@/types";
 import { Box } from "@mui/material";
 
-export default function FinalStats({
-    workerStats,
-    globalStats,
-}: {
-    workerStats: QWorkerApi[];
-    globalStats: GlobalStats;
-}) {
+export default function FinalStats({ wallet }: { wallet: string }) {
+    let {
+        data: workerStats,
+        isFetching,
+    }: {
+        data: QWorkerApi[];
+        isFetching: boolean;
+    } = useWorkersStats({ wallet, needActive: false }) as any;
+
+    let {
+        data: globalStats,
+    }: {
+        data: GlobalStats;
+    } = useGlobalStats();
     let totalPerformance = workerStats?.reduce((acc, curr) => {
         return acc + curr.hashrate;
     }, 0);
