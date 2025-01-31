@@ -1,14 +1,31 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
-import { Box, Container, Divider } from "@mui/material";
+import { Box, Container, Divider, Snackbar } from "@mui/material";
 import QDivider from "./components/QPixelDivider";
 import Footer from "./components/Footer";
 import IdManager from "./pages/IdManager/IdManager";
 import PaymentManager from "./pages/PaymentManager/PaymentManager";
 import Stats from "./pages/Stats/Stats";
+import useGlobalStore, { GlobalStore } from "./stores/useGlobalStore";
 
 function App() {
     const [page, setPage] = useState("stats");
+    let [showSnackbar, setShowSnackbar] = useState(false);
+    let [snackbarMessage, setSnackbarMessage] = useState("");
+    let globalStore: GlobalStore = useGlobalStore();
+    const handleOnCloseSnackbar = () => {
+        setShowSnackbar(false);
+    };
+
+    const handleOnpenAndSetSnackbar = (message: string) => {
+        setSnackbarMessage(message);
+        setShowSnackbar(true);
+    };
+
+    useEffect(() => {
+        globalStore.setHandleOnpenAndSetSnackbar(handleOnpenAndSetSnackbar);
+    }, []);
+
     return (
         <Container
             sx={{
@@ -19,6 +36,12 @@ function App() {
                 alignItems: "center",
             }}
         >
+            <Snackbar
+                open={showSnackbar}
+                autoHideDuration={5000}
+                onClose={handleOnCloseSnackbar}
+                message={snackbarMessage}
+            />
             <Box
                 className="cursor-pointer"
                 sx={{

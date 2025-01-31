@@ -1,11 +1,12 @@
-import useGlobalStats from "@/apis/useGlobalStats";
-import useMiningStrategy from "@/apis/useMiningStrategy";
-import useUpdateMiningStrategy from "@/apis/useUpdateMiningStrategy";
+import queryKeys from "@/apis/getQueryKey";
+import useGeneralGet from "@/apis/useGeneralGet";
+import useGeneralPost from "@/apis/useGeneralPost";
+import MaterialUIInput from "@/components/MaterialUIInput";
 import QButton from "@/components/QButton";
 import QLoadingCircle from "@/components/QLoadingCircle";
 import { GlobalStats, MiningConfig } from "@/types";
-import { Box, styled, TextField } from "@mui/material";
-import { useEffect, useRef, useState } from "react";
+import { Box } from "@mui/material";
+import { useEffect, useState } from "react";
 
 export default function MiningStrategy({
     handleOnpenAndSetSnackbar,
@@ -16,14 +17,20 @@ export default function MiningStrategy({
         data: globalStats,
     }: {
         data: GlobalStats;
-    } = useGlobalStats();
+    } = useGeneralGet({
+        path: "globalStats",
+        queryKey: queryKeys["globalStats"](),
+    }) as any;
     let {
         data: miningStrategy,
         isFetching: isMiningStrategyFetching,
     }: {
         data: MiningConfig;
         isFetching: boolean;
-    } = useMiningStrategy() as any;
+    } = useGeneralGet({
+        queryKey: queryKeys["miningConfig"](),
+        path: "mining-config",
+    }) as any;
 
     let {
         mutate: updateMiningStrategy,
@@ -37,11 +44,14 @@ export default function MiningStrategy({
         isError: any;
         isSuccess: any;
         reset: any;
-    } = useUpdateMiningStrategy() as any;
+    } = useGeneralPost({
+        queryKey: queryKeys["miningConfig"](),
+        path: "mining-config",
+    }) as any;
 
-    let hashrateInputRef = useRef<HTMLInputElement>(null);
-    let solutionInputRef = useRef<HTMLInputElement>(null);
-    let avgOverRateInputRef = useRef<HTMLInputElement>(null);
+    let [hashrateText, setHashrateText] = useState("");
+    let [solutionText, setSolutionText] = useState("");
+    let [avgOverRateText, setAvgOverRateText] = useState("");
 
     let [miningStrategyState, setMiningStrategyState] = useState<MiningConfig>({
         diffHashRateToBalance: 0,
@@ -49,48 +59,10 @@ export default function MiningStrategy({
         avgOverRate: 0,
     });
 
-    const CssTextField = styled(TextField)({
-        "& label": {
-            fontSize: ".8rem !important",
-            fontFamily: "jura",
-        },
-        "& label.Mui-focused": {
-            color: "black",
-            borderRadius: "none",
-        },
-        "& .MuiInput-underline:after": {
-            borderBottomColor: "black",
-            borderRadius: "none",
-        },
-        "& .MuiOutlinedInput-root": {
-            borderRadius: "none",
-            "& input": {
-                paddingTop: "12px !important",
-                paddingBottom: "12px !important",
-            },
-            "& fieldset": {
-                borderColor: "black",
-                borderRadius: "0px",
-            },
-            "&:hover fieldset": {
-                borderColor: "black",
-                borderRadius: "none",
-            },
-            "&.Mui-focused fieldset": {
-                borderColor: "black",
-                borderRadius: "none",
-            },
-        },
-    });
-
     const handleSave = () => {
-        let diffHashRateToBalance = parseInt(
-            hashrateInputRef.current?.value as any
-        );
-        let diffSolutionToBalance = parseInt(
-            solutionInputRef.current?.value as any
-        );
-        let avgOverRate = avgOverRateInputRef.current?.value as any;
+        let diffHashRateToBalance = parseInt(hashrateText);
+        let diffSolutionToBalance = parseInt(solutionText);
+        let avgOverRate = Number(avgOverRateText);
 
         setMiningStrategyState({
             diffHashRateToBalance,
@@ -108,6 +80,13 @@ export default function MiningStrategy({
     useEffect(() => {
         if (miningStrategy) {
             setMiningStrategyState(miningStrategy);
+            setHashrateText(
+                miningStrategy?.diffHashRateToBalance?.toString() || "0"
+            );
+            setSolutionText(
+                miningStrategy?.diffSolutionToBalance?.toString() || "0"
+            );
+            setAvgOverRateText(miningStrategy?.avgOverRate?.toString() || "0");
         }
     }, [miningStrategy]);
 
@@ -151,57 +130,57 @@ export default function MiningStrategy({
                 >
                     <Box
                         sx={{
-                            padding: "12px",
+                            paddingX: "12px",
                             border: "1px solid black",
                             borderRight: "none",
+                            display: "flex",
+                            alignItems: "center",
                         }}
                     >
                         Avg Score: {parseInt(globalStats?.avgScore as any)}
                     </Box>
 
-                    <CssTextField
-                        defaultValue={miningStrategyState.diffHashRateToBalance}
-                        inputRef={hashrateInputRef}
-                        sx={{
+                    <MaterialUIInput
+                        value={hashrateText}
+                        onChange={(e: any) => {
+                            setHashrateText(e.target.value);
+                        }}
+                        customCss={{
                             width: "33%",
                         }}
-                        id="outlined-basic"
                         label="Max It/s Difference Between Ids"
-                        variant="outlined"
                     />
 
-                    <CssTextField
-                        defaultValue={miningStrategyState.diffSolutionToBalance}
-                        inputRef={solutionInputRef}
-                        sx={{
+                    <MaterialUIInput
+                        value={solutionText}
+                        onChange={(e: any) => {
+                            setSolutionText(e.target.value);
+                        }}
+                        customCss={{
                             width: "33%",
                         }}
-                        id="outlined-basic"
                         label="Max Solutions Difference Between Ids"
-                        variant="outlined"
                     />
-                    <CssTextField
-                        defaultValue={miningStrategyState.avgOverRate}
-                        inputRef={avgOverRateInputRef}
-                        sx={{
+
+                    <MaterialUIInput
+                        value={avgOverRateText}
+                        onChange={(e: any) => {
+                            setAvgOverRateText(e.target.value);
+                        }}
+                        customCss={{
                             width: "10%",
                         }}
-                        id="outlined-basic"
                         label="Avg Over Rate"
-                        variant="outlined"
                     />
 
                     {isUpdatePending ? (
-                        <Box
-                            sx={{
-                                paddingLeft: "10px",
-                                display: "flex",
-                                alignItems: "center",
-                                transform: "scale(1)",
+                        <QButton
+                            customCss={{
+                                marginLeft: "10px",
                             }}
-                        >
-                            <QLoadingCircle />
-                        </Box>
+                            isDisabled={true}
+                            text="Saving..."
+                        />
                     ) : (
                         <QButton
                             customCss={{

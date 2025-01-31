@@ -1,14 +1,19 @@
 import { Box } from "@mui/material";
-import { useState } from "react";
-import QInput from "@/components/QInput";
 import QMinerTable from "./MinerTable";
 import FinalStats from "./FinalStats";
 import CentralStats from "./CentralStats";
 import GraphStats from "./GraphStats";
 import Payments from "./Payments";
+import { memo, useState } from "react";
+import WalletInput from "./WalletInput";
 
-export default function Stats() {
+export default memo(function Stats() {
     let [wallet, setWallet] = useState(localStorage.getItem("wallet") || "");
+
+    const handleOnSaveWallet = (wallet: string) => {
+        localStorage.setItem("wallet", wallet);
+        setWallet(wallet);
+    };
 
     return (
         <Box
@@ -17,17 +22,8 @@ export default function Stats() {
                 paddingTop: "20px",
             }}
         >
-            <QInput
-                initialValue={wallet}
-                onCommit={(value) => {
-                    setWallet(value);
-                    localStorage.setItem("wallet", value);
-                }}
-                customCss={{
-                    marginTop: "10px",
-                }}
-            />
             {/* <QLoading /> */}
+            <WalletInput initialValue={wallet} onCommit={handleOnSaveWallet} />
             <Box
                 id="stats-main-wrapper"
                 sx={{
@@ -58,4 +54,4 @@ export default function Stats() {
             </Box>
         </Box>
     );
-}
+});

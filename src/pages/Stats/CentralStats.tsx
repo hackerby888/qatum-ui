@@ -1,4 +1,5 @@
-import useGlobalStats from "@/apis/useGlobalStats";
+import queryKeys from "@/apis/getQueryKey";
+import useGeneralGet from "@/apis/useGeneralGet";
 import { GlobalStats } from "@/types";
 import formatNumber from "@/utils/number";
 import { Box } from "@mui/material";
@@ -8,7 +9,10 @@ export default function CentralStats() {
         data: globalStats,
     }: {
         data: GlobalStats;
-    } = useGlobalStats();
+    } = useGeneralGet({
+        path: "globalStats",
+        queryKey: queryKeys["globalStats"](),
+    }) as any;
     return (
         <Box
             sx={{

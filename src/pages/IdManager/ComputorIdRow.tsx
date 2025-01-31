@@ -7,9 +7,10 @@ import QSelect from "@/components/QSelect";
 import Dialog from "@mui/material/Dialog";
 import Snackbar from "@mui/material/Snackbar";
 import { useQueryClient } from "@tanstack/react-query";
-import { getComputorIdsQueryKey } from "@/apis/useComputorIds";
-import useComputorIdDetail from "@/apis/useComputorIdDetail";
 import QLoadingCircle from "@/components/QLoadingCircle";
+import formatNumber from "@/utils/number";
+import useGeneralGet from "@/apis/useGeneralGet";
+import queryKeys from "@/apis/getQueryKey";
 
 const trueFalseOptions: QSelectOptions[] = [
     {
@@ -72,8 +73,14 @@ export default memo(function ComputorIdRow({
             }[];
         };
         isFetching: boolean;
-    } = useComputorIdDetail({
-        computorId: data.id,
+    } = useGeneralGet({
+        queryKey: queryKeys["computorIdDetail"]({
+            computorId: data.id,
+        }),
+        path: "computor-id/detail",
+        reqQuery: {
+            computorId: data.id,
+        },
         enabled: isOpenningDialog,
     }) as any;
     let queryClient = useQueryClient();
@@ -87,18 +94,11 @@ export default memo(function ComputorIdRow({
         );
 
         let currentIds = queryClient.getQueryData(
-            getComputorIdsQueryKey()
+            queryKeys["computorIds"]()
         ) as ComputorIdDataApi[];
 
-        // let newIds = currentIds.map((id) => {
-        //     if (id.id === idText) {
-        //         id[field] = option.value;
-        //     }
-        //     return id;
-        // });
-
         currentIds[globalIndex][field] = option.value;
-        queryClient.setQueryData(getComputorIdsQueryKey(), currentIds);
+        queryClient.setQueryData(queryKeys["computorIds"](), currentIds);
 
         console.log(field, option);
     };
@@ -114,7 +114,7 @@ export default memo(function ComputorIdRow({
 
     const handleOnDelete = () => {
         let currentIds = queryClient.getQueryData(
-            getComputorIdsQueryKey()
+            queryKeys["computorIds"]()
         ) as ComputorIdDataApi[];
 
         //set .workers = -1 to delete
@@ -129,7 +129,7 @@ export default memo(function ComputorIdRow({
 
         currentIds[globalIndex].workers = -1;
 
-        queryClient.setQueryData(getComputorIdsQueryKey(), currentIds);
+        queryClient.setQueryData(queryKeys["computorIds"](), currentIds);
         setRerenderTrigger((prev: number) => prev + 1);
     };
 
@@ -141,7 +141,7 @@ export default memo(function ComputorIdRow({
         setEditingIdIndex(null);
 
         let currentIds = queryClient.getQueryData(
-            getComputorIdsQueryKey()
+            queryKeys["computorIds"]()
         ) as ComputorIdDataApi[];
 
         if (currentIds.some((id) => id.id === idText)) {
@@ -151,7 +151,7 @@ export default memo(function ComputorIdRow({
 
         currentIds[globalIndex].id = idText;
 
-        queryClient.setQueryData(getComputorIdsQueryKey(), currentIds);
+        queryClient.setQueryData(queryKeys["computorIds"](), currentIds);
     };
 
     if (data.workers === -1) return null;
@@ -245,7 +245,10 @@ export default memo(function ComputorIdRow({
                                                     fontWeight: "bold",
                                                 }}
                                             >
-                                                {walletData.hashrate} Its
+                                                {formatNumber(
+                                                    walletData.hashrate
+                                                )}{" "}
+                                                Its
                                             </span>{" "}
                                         </Box>
                                     )

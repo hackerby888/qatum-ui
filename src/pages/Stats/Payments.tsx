@@ -1,10 +1,13 @@
 import { Box } from "@mui/material";
 import HourglassTopRoundedIcon from "@mui/icons-material/HourglassTopRounded";
 import ArrowDropDownRoundedIcon from "@mui/icons-material/ArrowDropDownRounded";
-import usePaymentsHistory, { PAYMENTS_LIMIT } from "@/apis/usePaymentsHistory";
 import { PaymentDbDataWithReward } from "@/types";
 import formatNumber from "@/utils/number";
-
+import useInfiniteGet from "@/apis/useInfiniteGet";
+import queryKeys from "@/apis/getQueryKey";
+import CreditScoreRoundedIcon from "@mui/icons-material/CreditScoreRounded";
+import { v4 } from "uuid";
+const PAYMENTS_LIMIT = 20;
 export default function Payments({ wallet }: { wallet: string }) {
     let {
         data: payments,
@@ -16,8 +19,19 @@ export default function Payments({ wallet }: { wallet: string }) {
         };
         isFetchingNextPage: boolean;
         fetchNextPage: () => void;
-    } = usePaymentsHistory({ wallet }) as any;
-    console.log(payments);
+    } = useInfiniteGet({
+        queryKey: queryKeys["payments"]({ wallet }),
+        path: "payments",
+        reqQuery: {
+            wallet,
+        },
+        limit: PAYMENTS_LIMIT,
+    }) as any;
+
+    const handleOpenNewTab = (url: string) => {
+        window.open(url, "_blank");
+    };
+
     let isLastPage =
         payments?.pages[payments?.pages.length - 1].length < PAYMENTS_LIMIT;
     return (
@@ -48,7 +62,15 @@ export default function Payments({ wallet }: { wallet: string }) {
             {payments?.pages?.map((page, _) =>
                 page.map((payment, j) => (
                     <Box
-                        key={j}
+                        onClick={
+                            payment.isPaid
+                                ? () =>
+                                      handleOpenNewTab(
+                                          `https://explorer.qubic.org/network/tx/${payment.txId}?type=latest`
+                                      )
+                                : () => {}
+                        }
+                        key={v4()}
                         sx={{
                             display: "flex",
                             justifyContent: "center",
@@ -58,10 +80,12 @@ export default function Payments({ wallet }: { wallet: string }) {
                             paddingX: "5px",
                             alignItems: "center",
                             cursor: "pointer",
-                            "&:hover": {
-                                backgroundColor: "var(--q-main-color)",
-                                color: "white",
-                            },
+                            "&:hover": payment.isPaid
+                                ? {
+                                      backgroundColor: "var(--q-main-color)",
+                                      color: "white",
+                                  }
+                                : {},
                         }}
                     >
                         <Box
@@ -70,9 +94,14 @@ export default function Payments({ wallet }: { wallet: string }) {
                                 alignItems: "center",
                             }}
                         >
-                            <HourglassTopRoundedIcon />
+                            {payment.isPaid ? (
+                                <CreditScoreRoundedIcon />
+                            ) : (
+                                <HourglassTopRoundedIcon />
+                            )}
                         </Box>
                         <Box
+                            className="jura-font"
                             sx={{
                                 width: "100%",
                                 display: "flex",

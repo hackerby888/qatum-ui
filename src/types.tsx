@@ -86,3 +86,11 @@ export interface MiningConfig {
     diffSolutionToBalance: number; // solution difference between highest - lowest to balance
     avgOverRate: number; // when our ids below avg score, we should mine to target score = avgScore * avgOverRate
 }
+
+export interface EpochDbData {
+    epoch: number;
+    solutionValue: number;
+    shareValue: number;
+}
+
+export type PaymentDbState = "all" | "unpaid" | "paid";

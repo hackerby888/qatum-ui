@@ -1,5 +1,5 @@
-import useGlobalStats from "@/apis/useGlobalStats";
-import useWorkersStats from "@/apis/useWorkersStats";
+import queryKeys from "@/apis/getQueryKey";
+import useGeneralGet from "@/apis/useGeneralGet";
 import Divider from "@/components/QDivider";
 import { GlobalStats, QWorkerApi } from "@/types";
 import { Box } from "@mui/material";
@@ -7,17 +7,27 @@ import { Box } from "@mui/material";
 export default function FinalStats({ wallet }: { wallet: string }) {
     let {
         data: workerStats,
-        isFetching,
+        isFetching: _,
     }: {
         data: QWorkerApi[];
         isFetching: boolean;
-    } = useWorkersStats({ wallet, needActive: false }) as any;
+    } = useGeneralGet({
+        queryKey: queryKeys["workerStats"]({ wallet }),
+        path: "workers",
+        reqQuery: {
+            wallet,
+            needActive: true,
+        },
+    }) as any;
 
     let {
         data: globalStats,
     }: {
         data: GlobalStats;
-    } = useGlobalStats();
+    } = useGeneralGet({
+        path: "globalStats",
+        queryKey: queryKeys["globalStats"](),
+    }) as any;
     let totalPerformance = workerStats?.reduce((acc, curr) => {
         return acc + curr.hashrate;
     }, 0);

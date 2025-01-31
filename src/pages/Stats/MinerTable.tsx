@@ -4,11 +4,9 @@ import QMinerRow from "./MinerRow";
 import { GlobalStats, QWorkerApi } from "@/types";
 import { v4 } from "uuid";
 import QLoading from "@/components/QLoading";
-import useWorkersStats, {
-    getWorkersStatsQueryKey,
-} from "@/apis/useWorkersStats";
-import useGlobalStats from "@/apis/useGlobalStats";
 import { useQueryClient } from "@tanstack/react-query";
+import useGeneralGet from "@/apis/useGeneralGet";
+import queryKeys from "@/apis/getQueryKey";
 
 let sortMap = {
     name: "asc",
@@ -26,18 +24,28 @@ export default function QMinerTable({ wallet }: { wallet: string }) {
     }: {
         data: QWorkerApi[];
         isFetching: boolean;
-    } = useWorkersStats({ wallet, needActive: false }) as any;
+    } = useGeneralGet({
+        queryKey: queryKeys["workerStats"]({ wallet }),
+        path: "workers",
+        reqQuery: {
+            wallet,
+            needActive: true,
+        },
+    }) as any;
 
     let {
         data: globalStats,
     }: {
         data: GlobalStats;
-    } = useGlobalStats();
+    } = useGeneralGet({
+        path: "globalStats",
+        queryKey: queryKeys["globalStats"](),
+    }) as any;
 
     let queryClient = useQueryClient();
 
     const handleSort = (key: keyof QWorkerApi) => {
-        let queryKey = getWorkersStatsQueryKey(wallet);
+        let queryKey = queryKeys["workerStats"]({ wallet });
 
         let queryData = structuredClone(workerStats);
 
@@ -106,6 +114,7 @@ export default function QMinerTable({ wallet }: { wallet: string }) {
                         display: "flex",
                         alignItems: "center",
                         cursor: "pointer",
+                        "&:hover": { color: "var(--q-main-color)" },
                     }}
                 >
                     Worker{" "}
@@ -131,6 +140,7 @@ export default function QMinerTable({ wallet }: { wallet: string }) {
                         display: "flex",
                         alignItems: "center",
                         cursor: "pointer",
+                        "&:hover": { color: "var(--q-main-color)" },
                     }}
                 >
                     {globalStats?.isShareModeEpoch ? "Shares" : "Solutions"}
@@ -150,6 +160,7 @@ export default function QMinerTable({ wallet }: { wallet: string }) {
                         display: "flex",
                         alignItems: "center",
                         cursor: "pointer",
+                        "&:hover": { color: "var(--q-main-color)" },
                     }}
                 >
                     It/s
@@ -169,6 +180,7 @@ export default function QMinerTable({ wallet }: { wallet: string }) {
                         display: "flex",
                         alignItems: "center",
                         cursor: "pointer",
+                        "&:hover": { color: "var(--q-main-color)" },
                     }}
                 >
                     Uptime
@@ -187,6 +199,7 @@ export default function QMinerTable({ wallet }: { wallet: string }) {
                         display: "flex",
                         alignItems: "center",
                         cursor: "pointer",
+                        "&:hover": { color: "var(--q-main-color)" },
                         justifyContent: "center",
                     }}
                 >

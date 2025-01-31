@@ -1,14 +1,16 @@
 import { Box, Snackbar } from "@mui/material";
 import FilterListRoundedIcon from "@mui/icons-material/FilterListRounded";
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import QButton from "@/components/QButton";
 import ComputorIdRow from "./ComputorIdRow";
-import useComputorIds, { getComputorIdsQueryKey } from "@/apis/useComputorIds";
 import { useQueryClient } from "@tanstack/react-query";
 import { ComputorIdDataApi } from "@/types";
 import QLoading from "@/components/QLoading";
-import useUpdateComputorIds from "@/apis/useUpdateComputorIds";
 import MiningStrategy from "./MiningStrategy";
+import useGeneralGet from "@/apis/useGeneralGet";
+import queryKeys from "@/apis/getQueryKey";
+import useGeneralPost from "@/apis/useGeneralPost";
+import useGlobalStore, { GlobalStore } from "@/stores/useGlobalStore";
 
 const ID_LENGTH = 60;
 const sortMap: {
@@ -23,14 +25,18 @@ const sortMap: {
 
 let lastComputorIdData: ComputorIdDataApi[] = [];
 
-export default function IdManager() {
+export default memo(function IdManager() {
+    let globalStore: GlobalStore = useGlobalStore();
     let {
         data: ids,
         isFetching,
     }: {
         data: ComputorIdDataApi[];
         isFetching: any;
-    } = useComputorIds() as any;
+    } = useGeneralGet({
+        queryKey: queryKeys["computorIds"](),
+        path: "computor-ids",
+    }) as any;
     let {
         mutate: updateComputorIds,
         isPending: isUpdateComputorIdsPending,
@@ -38,12 +44,13 @@ export default function IdManager() {
         isError,
         reset,
         error,
-    } = useUpdateComputorIds();
+    } = useGeneralPost({
+        queryKey: queryKeys["computorIds"](),
+        path: "computor-ids",
+    });
 
     let [editingIdIndex, setEditingIdIndex] = useState<number | null>(null);
     let [_, setRerenderTrigger] = useState(0);
-    let [showSnackbar, setShowSnackbar] = useState(false);
-    let [snackbarMessage, setSnackbarMessage] = useState("");
 
     let queryClient = useQueryClient();
 
@@ -62,7 +69,7 @@ export default function IdManager() {
         });
         if (lastElement) newArr.push(lastElement);
         sortMap[key] = sortMap[key] === "asc" ? "desc" : "asc";
-        queryClient.setQueryData(getComputorIdsQueryKey(), newArr);
+        queryClient.setQueryData(queryKeys["computorIds"](), newArr);
     };
 
     const handleAddNewId = () => {
@@ -87,7 +94,7 @@ export default function IdManager() {
             },
         ];
 
-        queryClient.setQueryData(getComputorIdsQueryKey(), newIds);
+        queryClient.setQueryData(queryKeys["computorIds"](), newIds);
 
         setEditingIdIndex(ids?.length);
     };
@@ -104,7 +111,7 @@ export default function IdManager() {
                 return id;
             });
 
-            queryClient.setQueryData(getComputorIdsQueryKey(), newArr);
+            queryClient.setQueryData(queryKeys["computorIds"](), newArr);
 
             setEditingIdIndex(null);
         }
@@ -145,15 +152,6 @@ export default function IdManager() {
         });
     };
 
-    const handleOnCloseSnackbar = () => {
-        setShowSnackbar(false);
-    };
-
-    const handleOnpenAndSetSnackbar = (message: string) => {
-        setSnackbarMessage(message);
-        setShowSnackbar(true);
-    };
-
     let isThereUncompletedId = ids?.some((id) => id.id.length < ID_LENGTH);
 
     let canCancel =
@@ -183,23 +181,17 @@ export default function IdManager() {
 
     useEffect(() => {
         if (isSuccess) {
-            handleOnpenAndSetSnackbar("Successfully updated");
+            globalStore.handleOnpenAndSetSnackbar("Successfully updated");
             reset();
         } else if (isError) {
             console.log(error);
-            handleOnpenAndSetSnackbar(`Error updating ${error}`);
+            globalStore.handleOnpenAndSetSnackbar(`Error updating ${error}`);
             reset();
         }
     }, [isSuccess, isError]);
 
     return (
         <>
-            <Snackbar
-                open={showSnackbar}
-                autoHideDuration={5000}
-                onClose={handleOnCloseSnackbar}
-                message={snackbarMessage}
-            />
             <Box
                 sx={{
                     width: "100%",
@@ -208,7 +200,9 @@ export default function IdManager() {
                 }}
             >
                 <MiningStrategy
-                    handleOnpenAndSetSnackbar={handleOnpenAndSetSnackbar}
+                    handleOnpenAndSetSnackbar={
+                        globalStore.handleOnpenAndSetSnackbar
+                    }
                 />
                 <Box
                     sx={{
@@ -252,6 +246,7 @@ export default function IdManager() {
                                     display: "flex",
                                     alignItems: "center",
                                     cursor: "pointer",
+                                    "&:hover": { color: "var(--q-main-color)" },
                                     userSelect: "none",
                                 }}
                             >
@@ -269,6 +264,7 @@ export default function IdManager() {
                                     alignItems: "center",
                                     justifyContent: "center",
                                     cursor: "pointer",
+                                    "&:hover": { color: "var(--q-main-color)" },
                                     userSelect: "none",
                                 }}
                             >
@@ -286,6 +282,7 @@ export default function IdManager() {
                                     alignItems: "center",
                                     justifyContent: "center",
                                     cursor: "pointer",
+                                    "&:hover": { color: "var(--q-main-color)" },
                                     userSelect: "none",
                                 }}
                             >
@@ -302,6 +299,7 @@ export default function IdManager() {
                                     display: "flex",
                                     alignItems: "center",
                                     cursor: "pointer",
+                                    "&:hover": { color: "var(--q-main-color)" },
                                     userSelect: "none",
                                 }}
                             >
@@ -318,6 +316,7 @@ export default function IdManager() {
                                     display: "flex",
                                     alignItems: "center",
                                     cursor: "pointer",
+                                    "&:hover": { color: "var(--q-main-color)" },
                                     userSelect: "none",
                                 }}
                             >
@@ -429,4 +428,4 @@ export default function IdManager() {
             </Box>
         </>
     );
-}
+});

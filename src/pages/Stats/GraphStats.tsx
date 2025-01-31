@@ -1,4 +1,5 @@
-import useGlobalStats from "@/apis/useGlobalStats";
+import queryKeys from "@/apis/getQueryKey";
+import useGeneralGet from "@/apis/useGeneralGet";
 import { ONE_DAY, THREE_MINUTES } from "@/consts/time";
 import { GlobalStats } from "@/types";
 import { Box } from "@mui/material";
@@ -30,7 +31,10 @@ export default function GraphStats() {
         data: globalStats,
     }: {
         data: GlobalStats;
-    } = useGlobalStats();
+    } = useGeneralGet({
+        path: "globalStats",
+        queryKey: queryKeys["globalStats"](),
+    }) as any;
 
     useEffect(() => {
         let statsWrapper = document.getElementById("stats-main-wrapper");
