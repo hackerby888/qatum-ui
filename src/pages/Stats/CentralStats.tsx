@@ -1,5 +1,6 @@
 import queryKeys from "@/apis/getQueryKey";
 import useGeneralGet from "@/apis/useGeneralGet";
+import QDivider from "@/components/QDivider";
 import { GlobalStats } from "@/types";
 import formatNumber from "@/utils/number";
 import { Box } from "@mui/material";
@@ -19,7 +20,7 @@ export default function CentralStats() {
                 display: "flex",
                 width: {
                     xs: "100%",
-                    md: "fit-content",
+                    md: "30%",
                 },
                 //      boxShadow: "0px 0px 5px 0px #ccc",
                 flexDirection: "column",
@@ -43,26 +44,34 @@ export default function CentralStats() {
                     className="jura-font"
                     sx={{
                         paddingY: "5px",
+                        display: "flex",
+                        alignItems: "center",
                     }}
                 >
-                    Network: {formatNumber(globalStats?.estimatedIts || 0)} It/s
+                    Network <QDivider />{" "}
+                    {formatNumber(globalStats?.estimatedIts || 0)} It/s
                 </Box>
                 <Box
                     className="jura-font"
                     sx={{
                         paddingY: "5px",
+                        display: "flex",
+                        alignItems: "center",
                     }}
                 >
-                    Epoch Solution Rate:{" "}
+                    Epoch Solution Rate <QDivider />{" "}
                     {formatNumber(globalStats?.solutionsPerHour || 0)} / h
                 </Box>
                 <Box
                     className="jura-font"
                     sx={{
                         paddingY: "5px",
+                        display: "flex",
+                        alignItems: "center",
                     }}
                 >
-                    Current Solution Rate:{" "}
+                    Current Solution Rate
+                    <QDivider />{" "}
                     {formatNumber(globalStats?.solutionsPerHourEpoch || 0)} / h
                 </Box>
             </Box>
@@ -82,25 +91,33 @@ export default function CentralStats() {
                     className="jura-font"
                     sx={{
                         paddingY: "5px",
+                        display: "flex",
+                        alignItems: "center",
                     }}
                 >
-                    Epoch: {globalStats?.epoch || 0}
+                    Epoch <QDivider />
+                    {globalStats?.epoch || 0}
                 </Box>
                 <Box
                     className="jura-font"
                     sx={{
                         paddingY: "5px",
+                        display: "flex",
+                        alignItems: "center",
                     }}
                 >
-                    Users: {globalStats?.wallets || 0}
+                    Users
+                    <QDivider /> {globalStats?.wallets || 0}
                 </Box>
                 <Box
                     className="jura-font"
                     sx={{
                         paddingY: "5px",
+                        display: "flex",
+                        alignItems: "center",
                     }}
                 >
-                    Workers: {globalStats?.workers || 0}
+                    Workers <QDivider /> {globalStats?.workers || 0}
                 </Box>
             </Box>
             <Box
@@ -117,26 +134,33 @@ export default function CentralStats() {
                     className="jura-font"
                     sx={{
                         paddingY: "5px",
+                        display: "flex",
+                        alignItems: "center",
                     }}
                 >
-                    Pool It/s: {formatNumber(globalStats?.hashrate || 0)}
+                    Pool It/s <QDivider />{" "}
+                    {formatNumber(globalStats?.hashrate || 0)}
                 </Box>
                 <Box
                     className="jura-font"
                     sx={{
                         paddingY: "5px",
+                        display: "flex",
+                        alignItems: "center",
                     }}
                 >
-                    Pool Solutions:{" "}
+                    Pool Solutions <QDivider />{" "}
                     {formatNumber(globalStats?.solutionsWritten || 0)}
                 </Box>
                 <Box
                     className="jura-font"
                     sx={{
                         paddingY: "5px",
+                        display: "flex",
+                        alignItems: "center",
                     }}
                 >
-                    Pool Shares:{" "}
+                    Pool Shares <QDivider />{" "}
                     {formatNumber(globalStats?.solutionsShare || 0)}
                 </Box>
             </Box>

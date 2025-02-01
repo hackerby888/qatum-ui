@@ -32,6 +32,7 @@ export default function QMinerTable({ wallet }: { wallet: string }) {
             wallet,
             needActive: true,
         },
+        enabled: !!wallet,
     }) as any;
 
     let {

@@ -26,6 +26,7 @@ export default function Payments({ wallet }: { wallet: string }) {
             wallet,
         },
         limit: PAYMENTS_LIMIT,
+        enabled: !!wallet,
     }) as any;
 
     const handleOpenNewTab = (url: string) => {
@@ -48,7 +49,7 @@ export default function Payments({ wallet }: { wallet: string }) {
                 //     boxShadow: "0px 0px 5px 0px #ccc",
                 border: "1px solid var(--q-border-color)",
                 borderRadius: "5px",
-                padding: "5px",
+                padding: "10px",
                 marginTop: {
                     xs: "10px",
                     md: "0",
@@ -90,12 +91,12 @@ export default function Payments({ wallet }: { wallet: string }) {
                                 paddingY: "5px",
                                 paddingX: "5px",
                                 alignItems: "center",
-                                cursor: "pointer",
+                                cursor: payment.isPaid ? "pointer" : "default",
                                 "&:hover": payment.isPaid
                                     ? {
                                           backgroundColor:
-                                              "var(--q-main-color)",
-                                          color: "white !important",
+                                              "var(--q-background-color)",
+                                          // color: "white !important",
                                       }
                                     : {},
                             }}
@@ -128,25 +129,62 @@ export default function Payments({ wallet }: { wallet: string }) {
                                     width: "100%",
                                     display: "flex",
                                     justifyContent: "center",
-                                    fontSize: ".8rem",
-                                    fontWeight: "bold",
+                                    fontSize: ".9rem",
+                                    alignItems: "center",
                                 }}
                             >
-                                {formatNumber(payment.reward)}{" "}
-                                <span
-                                    className="roboto-font"
-                                    style={{
-                                        marginLeft: "5px",
-                                        marginRight: "5px",
+                                <Box
+                                    className="jura-font"
+                                    sx={{
+                                        width: "45%",
+                                        display: "flex",
+                                        justifyContent: "flex-end",
                                     }}
                                 >
-                                    @
-                                </span>{" "}
-                                {payment.solutionsShare > 0
-                                    ? `${payment.solutionsShare} Shares`
-                                    : `${payment.solutionsWritten} Solutions`}
+                                    {" "}
+                                    {formatNumber(payment.reward)} QUBIC
+                                </Box>
+                                <Box
+                                    sx={{
+                                        width: "5%",
+                                        display: "flex",
+                                        justifyContent: "center",
+                                    }}
+                                >
+                                    <Box
+                                        sx={{
+                                            width: "5px",
+                                            height: "5px",
+                                            background: payment.isPaid
+                                                ? "var(--q-main-color)"
+                                                : "red",
+                                            borderRadius: "50%",
+                                            marginX: "5px",
+                                        }}
+                                    ></Box>
+                                </Box>
+                                <Box
+                                    className="jura-font"
+                                    sx={{
+                                        width: "45%",
+                                        display: "flex",
+                                        justifyContent: "flex-start",
+                                    }}
+                                >
+                                    {payment.solutionsShare > 0
+                                        ? `${payment.solutionsShare} Shares`
+                                        : `${payment.solutionsWritten} Solutions`}
+                                </Box>
                             </Box>
-                            <Box>E{payment.epoch}</Box>
+                            <Box
+                                className="jura-font"
+                                sx={{
+                                    fontWeight: "bold",
+                                    fontSize: ".9rem",
+                                }}
+                            >
+                                E{payment.epoch}
+                            </Box>
                         </Box>
                     );
                 })

@@ -1,6 +1,5 @@
 import queryKeys from "@/apis/getQueryKey";
 import useGeneralGet from "@/apis/useGeneralGet";
-import QButton from "@/components/QButton";
 import QSelect from "@/components/QSelect";
 import { PaymentDbDataWithReward, PaymentDbState } from "@/types";
 import formatNumber from "@/utils/number";
