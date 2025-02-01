@@ -1,8 +1,9 @@
 import queryKeys from "@/apis/getQueryKey";
 import useGeneralGet from "@/apis/useGeneralGet";
+import QLoadingBlob from "@/components/QLoadingBlob";
 import { ONE_DAY, THREE_MINUTES } from "@/consts/time";
 import { GlobalStats } from "@/types";
-import { Box } from "@mui/material";
+import { Box, Skeleton } from "@mui/material";
 import ReactECharts from "echarts-for-react";
 import { useEffect, useState } from "react";
 
@@ -29,8 +30,10 @@ export default function GraphStats() {
     let [graphHeight, setGraphHeight] = useState(0);
     let {
         data: globalStats,
+        isFetching,
     }: {
         data: GlobalStats;
+        isFetching: boolean;
     } = useGeneralGet({
         path: "globalStats",
         queryKey: queryKeys["globalStats"](),
@@ -80,79 +83,93 @@ export default function GraphStats() {
                 },
             }}
         >
-            <ReactECharts
-                style={{
-                    width: "100%",
-                    height: `${graphHeight}px`,
-                }}
-                option={{
-                    // visualMap: [
-                    //     {
-                    //         show: false,
-                    //         type: "continuous",
-                    //         seriesIndex: 0,
-                    //         min: 0,
-                    //         max: 5000,
-                    //     },
-                    // ],
+            {!isFetching ? (
+                <ReactECharts
+                    style={{
+                        width: "100%",
+                        height: `${graphHeight}px`,
+                    }}
+                    option={{
+                        // visualMap: [
+                        //     {
+                        //         show: false,
+                        //         type: "continuous",
+                        //         seriesIndex: 0,
+                        //         min: 0,
+                        //         max: 5000,
+                        //     },
+                        // ],
 
-                    tooltip: {
-                        trigger: "axis",
-                    },
-                    legend: {
-                        type: "scroll",
-                        lineStyle: {
-                            color: "white",
+                        tooltip: {
+                            trigger: "axis",
                         },
-                        textStyle: {
-                            color: "#9c27b0",
-                            fontWeight: "bold",
-                        },
-                        data: ["Pool It/s"],
-                    },
-                    xAxis: {
-                        axisTick: {
-                            alignWithLabel: true,
-                        },
-                        type: "category",
-                        data: xAxisTimeStamps,
-                        axisLine: {
+                        legend: {
+                            type: "scroll",
                             lineStyle: {
-                                color: "black",
+                                color: "white",
+                            },
+                            textStyle: {
+                                color: "#9c27b0",
+                                fontWeight: "bold",
+                            },
+                            data: ["Pool It/s"],
+                        },
+                        xAxis: {
+                            axisTick: {
+                                alignWithLabel: true,
+                            },
+                            type: "category",
+                            data: xAxisTimeStamps,
+                            axisLine: {
+                                lineStyle: {
+                                    color: "black",
+                                },
+                            },
+                            show: false,
+                        },
+                        yAxis: {
+                            type: "value",
+                            position: "left",
+                            axisLabel: {
+                                formatter: (val: number) =>
+                                    `${formaterDivide(val)}It/s`,
+                            },
+
+                            axisLine: {
+                                lineStyle: {
+                                    color: "gray",
+                                },
                             },
                         },
-                        show: false,
-                    },
-                    yAxis: {
-                        type: "value",
-                        position: "left",
-                        axisLabel: {
-                            formatter: (val: number) =>
-                                `${formaterDivide(val)}It/s`,
-                        },
-
-                        axisLine: {
-                            lineStyle: {
-                                color: "gray",
+                        series: [
+                            {
+                                name: "Pool It/s",
+                                color: "#9c27b0",
+                                smooth: true,
+                                showSymbol: false,
+                                type: "line",
+                                data: hashrateList || [],
                             },
-                        },
-                    },
-                    series: [
-                        {
-                            name: "Pool It/s",
-                            color: "#9c27b0",
-                            smooth: true,
-                            showSymbol: false,
-                            type: "line",
-                            data: hashrateList || [],
-                        },
-                    ],
-                }}
-                notMerge={true}
-                lazyUpdate={true}
-                opts={{}}
-                theme={"qatum"}
-            />
+                        ],
+                    }}
+                    notMerge={true}
+                    lazyUpdate={true}
+                    opts={{}}
+                    theme={"qatum"}
+                />
+            ) : (
+                <Box
+                    sx={{
+                        width: "100%",
+                        height: "100%",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                    }}
+                >
+                    <QLoadingBlob />
+                </Box>
+            )}
         </Box>
     );
 }

@@ -1,6 +1,7 @@
 import queryKeys from "@/apis/getQueryKey";
 import useGeneralGet from "@/apis/useGeneralGet";
 import QDivider from "@/components/QDivider";
+import Skeletons from "@/components/Skeletons";
 import { GlobalStats } from "@/types";
 import formatNumber from "@/utils/number";
 import { Box } from "@mui/material";
@@ -8,8 +9,10 @@ import { Box } from "@mui/material";
 export default function CentralStats() {
     let {
         data: globalStats,
+        isFetching,
     }: {
         data: GlobalStats;
+        isFetching: boolean;
     } = useGeneralGet({
         path: "globalStats",
         queryKey: queryKeys["globalStats"](),
@@ -28,7 +31,6 @@ export default function CentralStats() {
                 borderRadius: "5px",
             }}
         >
-            {" "}
             <Box
                 sx={{
                     border: "1px solid var(--q-border-color)",
@@ -40,40 +42,56 @@ export default function CentralStats() {
                 }}
             >
                 <Box>Network Stats</Box>
-                <Box
-                    className="jura-font"
-                    sx={{
-                        paddingY: "5px",
-                        display: "flex",
-                        alignItems: "center",
-                    }}
-                >
-                    Network <QDivider />{" "}
-                    {formatNumber(globalStats?.estimatedIts || 0)} It/s
-                </Box>
-                <Box
-                    className="jura-font"
-                    sx={{
-                        paddingY: "5px",
-                        display: "flex",
-                        alignItems: "center",
-                    }}
-                >
-                    Epoch Solution Rate <QDivider />{" "}
-                    {formatNumber(globalStats?.solutionsPerHour || 0)} / h
-                </Box>
-                <Box
-                    className="jura-font"
-                    sx={{
-                        paddingY: "5px",
-                        display: "flex",
-                        alignItems: "center",
-                    }}
-                >
-                    Current Solution Rate
-                    <QDivider />{" "}
-                    {formatNumber(globalStats?.solutionsPerHourEpoch || 0)} / h
-                </Box>
+                {!isFetching ? (
+                    <>
+                        {" "}
+                        <Box
+                            className="jura-font"
+                            sx={{
+                                paddingY: "5px",
+                                display: "flex",
+                                alignItems: "center",
+                            }}
+                        >
+                            Network <QDivider />{" "}
+                            {formatNumber(globalStats?.estimatedIts || 0)} It/s
+                        </Box>
+                        <Box
+                            className="jura-font"
+                            sx={{
+                                paddingY: "5px",
+                                display: "flex",
+                                alignItems: "center",
+                            }}
+                        >
+                            Epoch Solution Rate <QDivider />{" "}
+                            {formatNumber(globalStats?.solutionsPerHour || 0)} /
+                            h
+                        </Box>
+                        <Box
+                            className="jura-font"
+                            sx={{
+                                paddingY: "5px",
+                                display: "flex",
+                                alignItems: "center",
+                            }}
+                        >
+                            Current Solution Rate
+                            <QDivider />{" "}
+                            {formatNumber(
+                                globalStats?.solutionsPerHourEpoch || 0
+                            )}{" "}
+                            / h
+                        </Box>
+                    </>
+                ) : (
+                    <Skeletons
+                        customCss={{
+                            marginTop: "3px",
+                        }}
+                        row={3}
+                    />
+                )}
             </Box>
             <Box
                 sx={{
@@ -87,38 +105,50 @@ export default function CentralStats() {
                 }}
             >
                 <Box>General Stats</Box>
-                <Box
-                    className="jura-font"
-                    sx={{
-                        paddingY: "5px",
-                        display: "flex",
-                        alignItems: "center",
-                    }}
-                >
-                    Epoch <QDivider />
-                    {globalStats?.epoch || 0}
-                </Box>
-                <Box
-                    className="jura-font"
-                    sx={{
-                        paddingY: "5px",
-                        display: "flex",
-                        alignItems: "center",
-                    }}
-                >
-                    Users
-                    <QDivider /> {globalStats?.wallets || 0}
-                </Box>
-                <Box
-                    className="jura-font"
-                    sx={{
-                        paddingY: "5px",
-                        display: "flex",
-                        alignItems: "center",
-                    }}
-                >
-                    Workers <QDivider /> {globalStats?.workers || 0}
-                </Box>
+                {!isFetching ? (
+                    <>
+                        {" "}
+                        <Box
+                            className="jura-font"
+                            sx={{
+                                paddingY: "5px",
+                                display: "flex",
+                                alignItems: "center",
+                            }}
+                        >
+                            Epoch <QDivider />
+                            {globalStats?.epoch || 0}
+                        </Box>
+                        <Box
+                            className="jura-font"
+                            sx={{
+                                paddingY: "5px",
+                                display: "flex",
+                                alignItems: "center",
+                            }}
+                        >
+                            Users
+                            <QDivider /> {globalStats?.wallets || 0}
+                        </Box>
+                        <Box
+                            className="jura-font"
+                            sx={{
+                                paddingY: "5px",
+                                display: "flex",
+                                alignItems: "center",
+                            }}
+                        >
+                            Workers <QDivider /> {globalStats?.workers || 0}
+                        </Box>
+                    </>
+                ) : (
+                    <Skeletons
+                        customCss={{
+                            marginTop: "3px",
+                        }}
+                        row={3}
+                    />
+                )}
             </Box>
             <Box
                 sx={{
@@ -130,39 +160,51 @@ export default function CentralStats() {
                 }}
             >
                 <Box>Peformance Stats</Box>
-                <Box
-                    className="jura-font"
-                    sx={{
-                        paddingY: "5px",
-                        display: "flex",
-                        alignItems: "center",
-                    }}
-                >
-                    Pool It/s <QDivider />{" "}
-                    {formatNumber(globalStats?.hashrate || 0)}
-                </Box>
-                <Box
-                    className="jura-font"
-                    sx={{
-                        paddingY: "5px",
-                        display: "flex",
-                        alignItems: "center",
-                    }}
-                >
-                    Pool Solutions <QDivider />{" "}
-                    {formatNumber(globalStats?.solutionsWritten || 0)}
-                </Box>
-                <Box
-                    className="jura-font"
-                    sx={{
-                        paddingY: "5px",
-                        display: "flex",
-                        alignItems: "center",
-                    }}
-                >
-                    Pool Shares <QDivider />{" "}
-                    {formatNumber(globalStats?.solutionsShare || 0)}
-                </Box>
+                {!isFetching ? (
+                    <>
+                        {" "}
+                        <Box
+                            className="jura-font"
+                            sx={{
+                                paddingY: "5px",
+                                display: "flex",
+                                alignItems: "center",
+                            }}
+                        >
+                            Pool It/s <QDivider />{" "}
+                            {formatNumber(globalStats?.hashrate || 0)}
+                        </Box>
+                        <Box
+                            className="jura-font"
+                            sx={{
+                                paddingY: "5px",
+                                display: "flex",
+                                alignItems: "center",
+                            }}
+                        >
+                            Pool Solutions <QDivider />{" "}
+                            {formatNumber(globalStats?.solutionsWritten || 0)}
+                        </Box>
+                        <Box
+                            className="jura-font"
+                            sx={{
+                                paddingY: "5px",
+                                display: "flex",
+                                alignItems: "center",
+                            }}
+                        >
+                            Pool Shares <QDivider />{" "}
+                            {formatNumber(globalStats?.solutionsShare || 0)}
+                        </Box>
+                    </>
+                ) : (
+                    <Skeletons
+                        customCss={{
+                            marginTop: "3px",
+                        }}
+                        row={3}
+                    />
+                )}
             </Box>
         </Box>
     );

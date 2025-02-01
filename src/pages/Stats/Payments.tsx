@@ -7,17 +7,22 @@ import useInfiniteGet from "@/apis/useInfiniteGet";
 import queryKeys from "@/apis/getQueryKey";
 import CreditScoreRoundedIcon from "@mui/icons-material/CreditScoreRounded";
 import { v4 } from "uuid";
+import Skeletons from "@/components/Skeletons";
 const PAYMENTS_LIMIT = 20;
 export default function Payments({ wallet }: { wallet: string }) {
     let {
         data: payments,
         isFetchingNextPage,
         fetchNextPage,
+        isFetching,
+        error,
     }: {
         data: {
             pages: PaymentDbDataWithReward[][];
         };
         isFetchingNextPage: boolean;
+        isFetching: boolean;
+        error: any;
         fetchNextPage: () => void;
     } = useInfiniteGet({
         queryKey: queryKeys["payments"]({ wallet }),
@@ -35,6 +40,8 @@ export default function Payments({ wallet }: { wallet: string }) {
 
     let isLastPage =
         payments?.pages[payments?.pages.length - 1].length < PAYMENTS_LIMIT;
+
+    console.log("payments", error);
     return (
         <Box
             sx={{
@@ -189,7 +196,8 @@ export default function Payments({ wallet }: { wallet: string }) {
                     );
                 })
             )}
-            {!isLastPage ? (
+            {isFetching && <Skeletons row={3} />}
+            {!isLastPage && !isFetching && payments ? (
                 <Box
                     onClick={
                         isFetchingNextPage ? () => {} : () => fetchNextPage()
@@ -215,6 +223,22 @@ export default function Payments({ wallet }: { wallet: string }) {
                     )}
                 </Box>
             ) : null}
+
+            {error && (
+                <Box
+                    sx={{
+                        width: "100%",
+                        color: "red",
+                        display: "flex",
+                        justifyContent: "center",
+
+                        height: "100%",
+                        alignItems: "center",
+                    }}
+                >
+                    Error {`${error}`}
+                </Box>
+            )}
         </Box>
     );
 }

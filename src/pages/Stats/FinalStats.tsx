@@ -1,13 +1,14 @@
 import queryKeys from "@/apis/getQueryKey";
 import useGeneralGet from "@/apis/useGeneralGet";
 import Divider from "@/components/QDivider";
+import Skeletons from "@/components/Skeletons";
 import { GlobalStats, QWorkerApi } from "@/types";
 import { Box } from "@mui/material";
 
 export default function FinalStats({ wallet }: { wallet: string }) {
     let {
         data: workerStats,
-        isFetching: _,
+        isFetching: isFetchingWorkerStats,
     }: {
         data: QWorkerApi[];
         isFetching: boolean;
@@ -77,44 +78,48 @@ export default function FinalStats({ wallet }: { wallet: string }) {
                 {globalStats?.epoch}
             </Box>
 
-            {[
-                {
-                    text: "Your Total Performance",
-                    value: totalPerformance,
-                    unit: "It/s",
-                },
-                {
-                    text: "Your Total Workers",
-                    value: totalWorkers,
-                    unit: "",
-                },
-                globalStats?.isShareModeEpoch
-                    ? {
-                          text: "Your Total Shares",
-                          value: totalShares,
-                          unit: "Shares",
-                      }
-                    : {
-                          text: "Your Total Solutions",
-                          value: totalSolutions,
-                          unit: "Solutions",
-                      },
-            ].map((item) => (
-                <Box
-                    key={item.text}
-                    sx={{
-                        paddingY: "5px",
-                        // borderBottom: "1px solid #ccc",
-                        paddingX: "5px",
-                        display: "flex",
-                        width: "100%",
-                        alignItems: "center",
-                    }}
-                    className="jura-font"
-                >
-                    {item.text} <Divider /> {item.value} {item.unit}
-                </Box>
-            ))}
+            {!isFetchingWorkerStats ? (
+                [
+                    {
+                        text: "Your Total Performance",
+                        value: totalPerformance,
+                        unit: "It/s",
+                    },
+                    {
+                        text: "Your Total Workers",
+                        value: totalWorkers,
+                        unit: "",
+                    },
+                    globalStats?.isShareModeEpoch
+                        ? {
+                              text: "Your Total Shares",
+                              value: totalShares,
+                              unit: "Shares",
+                          }
+                        : {
+                              text: "Your Total Solutions",
+                              value: totalSolutions,
+                              unit: "Solutions",
+                          },
+                ].map((item) => (
+                    <Box
+                        key={item.text}
+                        sx={{
+                            paddingY: "5px",
+                            // borderBottom: "1px solid #ccc",
+                            paddingX: "5px",
+                            display: "flex",
+                            width: "100%",
+                            alignItems: "center",
+                        }}
+                        className="jura-font"
+                    >
+                        {item.text} <Divider /> {item.value} {item.unit}
+                    </Box>
+                ))
+            ) : (
+                <Skeletons row={3} />
+            )}
 
             <Box
                 sx={{

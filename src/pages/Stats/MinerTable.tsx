@@ -3,7 +3,6 @@ import FilterListRoundedIcon from "@mui/icons-material/FilterListRounded";
 import QMinerRow from "./MinerRow";
 import { GlobalStats, QWorkerApi } from "@/types";
 import { v4 } from "uuid";
-import QLoading from "@/components/QLoading";
 import { useQueryClient } from "@tanstack/react-query";
 import useGeneralGet from "@/apis/useGeneralGet";
 import queryKeys from "@/apis/getQueryKey";
@@ -21,10 +20,12 @@ let sortMap = {
 export default function QMinerTable({ wallet }: { wallet: string }) {
     let {
         data: workerStats,
-        isFetching,
+        isFetching: isFetchingWorkerStats,
+        error: workerStatsError,
     }: {
         data: QWorkerApi[];
         isFetching: boolean;
+        error: any;
     } = useGeneralGet({
         queryKey: queryKeys["workerStats"]({ wallet }),
         path: "workers",
@@ -222,7 +223,7 @@ export default function QMinerTable({ wallet }: { wallet: string }) {
                     maxHeight: "50vh",
                 }}
             >
-                {isFetching ? (
+                {isFetchingWorkerStats ? (
                     <Box
                         sx={{
                             width: "100%",
@@ -233,7 +234,7 @@ export default function QMinerTable({ wallet }: { wallet: string }) {
                             paddingY: "10px",
                         }}
                     >
-                        <QLoadingBlob />
+                        Loading...
                     </Box>
                 ) : (
                     workerStats?.map((worker, i) => (
@@ -244,6 +245,20 @@ export default function QMinerTable({ wallet }: { wallet: string }) {
                             index={i}
                         />
                     ))
+                )}
+
+                {!isFetchingWorkerStats && workerStatsError && (
+                    <Box
+                        sx={{
+                            width: "100%",
+                            display: "flex",
+                            justifyContent: "center",
+                            paddingY: "10px",
+                            border: "1px solid var(--q-border-color)",
+                            borderTop: "none",
+                            color: "red",
+                        }}
+                    >{`${workerStatsError}`}</Box>
                 )}
             </Box>
         </Box>
