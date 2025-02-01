@@ -70,8 +70,14 @@ export default function GraphStats() {
             sx={{
                 flex: 1,
                 height: `${graphHeight}px`,
-                boxShadow: "0px 0px 5px 0px #ccc",
+                // boxShadow: "0px 0px 5px 0px #ccc",
                 paddingTop: "10px",
+                border: "1px solid var(--q-border-color)",
+                borderRadius: "5px",
+                marginTop: {
+                    xs: "10px",
+                    md: "0",
+                },
             }}
         >
             <ReactECharts
@@ -100,6 +106,7 @@ export default function GraphStats() {
                         },
                         textStyle: {
                             color: "#9c27b0",
+                            fontWeight: "bold",
                         },
                         data: ["Pool It/s"],
                     },

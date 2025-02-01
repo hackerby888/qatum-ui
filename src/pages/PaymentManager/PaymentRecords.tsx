@@ -163,7 +163,7 @@ export default function PaymentRecords({
                     sx={{
                         display: "flex",
                         paddingY: "10px",
-                        borderBottom: "1px solid #ccc",
+                        borderBottom: "1px solid var(--q-border-color)",
                     }}
                 >
                     <Box
@@ -184,7 +184,7 @@ export default function PaymentRecords({
                             userSelect: "none",
                         }}
                     >
-                        WALLET{" "}
+                        Wallet{" "}
                         <FilterListRoundedIcon
                             sx={{ marginLeft: "3px", fontSize: "1rem" }}
                             fontSize="small"
@@ -268,7 +268,7 @@ export default function PaymentRecords({
                             sx={{
                                 display: "flex",
                                 paddingY: "10px",
-                                borderBottom: "1px solid #ccc",
+                                borderBottom: "1px solid var(--q-border-color)",
                             }}
                         >
                             <Box

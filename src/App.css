@@ -1,45 +1,73 @@
-
 .lds-qatum,
 .lds-qatum div {
-  
-  box-sizing: border-box;
+    box-sizing: border-box;
 }
 .lds-qatum {
-  display: inline-block;
-  position: relative;
-  width: 80px;
-  height: 80px;
+    display: inline-block;
+    position: relative;
+    width: 80px;
+    height: 80px;
 }
 .lds-qatum div {
-  display: inline-block;
-  position: absolute;
-  left: 8px;
-  width: 16px;
-  background: currentColor;
-  animation: lds-qatum 1s cubic-bezier(0, 0.5, 0.5, 1) infinite;
-  
+    display: inline-block;
+    position: absolute;
+    left: 8px;
+    width: 16px;
+    background: currentColor;
+    animation: lds-qatum 1s cubic-bezier(0, 0.5, 0.5, 1) infinite;
 }
 .lds-qatum div:nth-child(1) {
-  left: 8px;
-  animation-delay: -0.24s;
+    left: 8px;
+    animation-delay: -0.24s;
 }
 .lds-qatum div:nth-child(2) {
-  left: 32px;
-  animation-delay: -0.12s;
+    left: 32px;
+    animation-delay: -0.12s;
 }
 .lds-qatum div:nth-child(3) {
-  left: 56px;
-  animation-delay: 0s;
+    left: 56px;
+    animation-delay: 0s;
+}
+
+.q-loading-blob {
+    width: 50px;
+    aspect-ratio: 1;
+    background: var(--q-main-color);
+    border-radius: 50%;
+    animation: l1 3s infinite linear;
+}
+@keyframes l1 {
+    12.5% {
+        border-radius: 37% 63% 70% 30% / 30% 62% 38% 70%;
+    }
+    25% {
+        border-radius: 50% 50% 70% 30% / 52% 62% 38% 48%;
+    }
+    37.5% {
+        border-radius: 33% 67% 18% 82% / 52% 75% 25% 48%;
+    }
+    50% {
+        border-radius: 73% 27% 18% 82% / 52% 32% 68% 48%;
+    }
+    62.5% {
+        border-radius: 73% 27% 74% 26% / 64% 32% 68% 36%;
+    }
+    75% {
+        border-radius: 84% 16% 15% 85% / 55% 79% 21% 45%;
+    }
+    87.5% {
+        border-radius: 12% 88% 69% 31% / 10% 66% 34% 90%;
+    }
 }
 
 @keyframes lds-qatum {
-  0% {
-    top: 8px;
-    height: 64px;
-  }
-  50%, 100% {
-    top: 24px;
-    height: 32px;
-  }
+    0% {
+        top: 8px;
+        height: 64px;
+    }
+    50%,
+    100% {
+        top: 24px;
+        height: 32px;
+    }
 }
-

@@ -23,15 +23,15 @@ const CssTextField = styled(TextField)({
             fontFamily: "Jura",
         },
         "& fieldset": {
-            borderColor: "black",
+            borderColor: "var(--q-border-color)",
             borderRadius: "0px",
         },
         "&:hover fieldset": {
-            borderColor: "black",
+            borderColor: "var(--q-border-color)",
             borderRadius: "none",
         },
         "&.Mui-focused fieldset": {
-            borderColor: "black",
+            borderColor: "var(--q-border-color)",
             borderRadius: "none",
         },
     },

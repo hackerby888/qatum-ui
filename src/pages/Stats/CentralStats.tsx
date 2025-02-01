@@ -21,14 +21,17 @@ export default function CentralStats() {
                     xs: "100%",
                     md: "fit-content",
                 },
-                boxShadow: "0px 0px 5px 0px #ccc",
+                //      boxShadow: "0px 0px 5px 0px #ccc",
                 flexDirection: "column",
                 marginRight: "10px",
+                borderRadius: "5px",
             }}
         >
             {" "}
             <Box
                 sx={{
+                    border: "1px solid var(--q-border-color)",
+                    borderRadius: "5px",
                     padding: "10px",
                     display: "flex",
                     flexDirection: "column",
@@ -65,10 +68,13 @@ export default function CentralStats() {
             </Box>
             <Box
                 sx={{
+                    border: "1px solid var(--q-border-color)",
+                    borderRadius: "5px",
                     padding: "10px",
                     display: "flex",
                     flexDirection: "column",
                     width: "100%",
+                    marginY: "10px",
                 }}
             >
                 <Box>General Stats</Box>
@@ -99,11 +105,11 @@ export default function CentralStats() {
             </Box>
             <Box
                 sx={{
-                    borderLeft: "none",
+                    border: "1px solid var(--q-border-color)",
+                    borderRadius: "5px",
                     padding: "10px",
                     display: "flex",
                     flexDirection: "column",
-                    width: "fit-content",
                 }}
             >
                 <Box>Peformance Stats</Box>

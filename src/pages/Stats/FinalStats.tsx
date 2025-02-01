@@ -47,9 +47,10 @@ export default function FinalStats({ wallet }: { wallet: string }) {
                 },
                 display: "flex",
                 flexDirection: "column",
-                boxShadow: "0px 0px 5px 0px #ccc",
-                padding: "5px",
+                //  boxShadow: "0px 0px 5px 0px #ccc",
+                border: "1px solid var(--q-border-color)",
                 borderRadius: "5px",
+                padding: "5px",
                 marginRight: "10px",
             }}
         >

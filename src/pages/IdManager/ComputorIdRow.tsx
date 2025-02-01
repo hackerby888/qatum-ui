@@ -11,6 +11,8 @@ import QLoadingCircle from "@/components/QLoadingCircle";
 import formatNumber from "@/utils/number";
 import useGeneralGet from "@/apis/useGeneralGet";
 import queryKeys from "@/apis/getQueryKey";
+import { v4 } from "uuid";
+import QButtonSimple from "@/components/QButtonSimple";
 
 const trueFalseOptions: QSelectOptions[] = [
     {
@@ -280,7 +282,7 @@ export default memo(function ComputorIdRow({
                     display: "flex",
                     width: "100%",
                     paddingY: "10px",
-                    borderTop: "1px solid black",
+                    borderTop: "1px solid var(--q-border-color)",
                 }}
             >
                 {" "}
@@ -352,36 +354,40 @@ export default memo(function ComputorIdRow({
                     }}
                 >
                     {isEditing ? (
-                        <QButton
+                        <QButtonSimple
                             isDisabled={idText.length !== 60}
                             onClick={handleConfirm}
                             customCss={{
                                 width: "fit-content",
+                                borderRadius: "5px",
                             }}
                             text="Confirm"
                         />
                     ) : (
                         <>
-                            <QButton
+                            <QButtonSimple
                                 onClick={() => setIsOpenningDialog(true)}
                                 customCss={{
-                                    width: "fit-content",
+                                    borderRadius: "5px",
+                                    paddingRight: "15px",
+                                    paddingLeft: "15px",
+                                    marginRight: "5px",
                                 }}
                                 text="Detail"
                             />
-                            <QButton
+                            <QButtonSimple
                                 onClick={() => handleOnDelete()}
                                 // effect3d={false}
                                 // effect2dHoverColor="red"
                                 customCss={{
-                                    width: "fit-content",
-                                    paddingX: "3px",
-                                    marginLeft: "5px",
+                                    paddingRight: "5px",
+                                    paddingLeft: "5px",
+                                    borderRadius: "5px",
                                 }}
                                 text=""
                             >
                                 <DeleteOutlineRoundedIcon />
-                            </QButton>
+                            </QButtonSimple>
                         </>
                     )}
                 </Box>

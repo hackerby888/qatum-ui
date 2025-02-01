@@ -18,7 +18,7 @@ export default function QMinerRow({
                 sx={{
                     display: "flex",
                     width: "100%",
-                    border: "1px solid black",
+                    border: "1px solid var(--q-border-color)",
                     borderTop: "none",
                 }}
             >

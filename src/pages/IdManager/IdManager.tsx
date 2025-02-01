@@ -11,6 +11,8 @@ import useGeneralGet from "@/apis/useGeneralGet";
 import queryKeys from "@/apis/getQueryKey";
 import useGeneralPost from "@/apis/useGeneralPost";
 import useGlobalStore, { GlobalStore } from "@/stores/useGlobalStore";
+import QButtonSimple from "@/components/QButtonSimple";
+import QLoadingBlob from "@/components/QLoadingBlob";
 
 const ID_LENGTH = 60;
 const sortMap: {
@@ -226,7 +228,7 @@ export default memo(function IdManager() {
                     <Box
                         sx={{
                             width: "100%",
-                            border: "1px solid black",
+                            border: "1px solid var(--q-border-color)",
                         }}
                     >
                         <Box
@@ -348,9 +350,12 @@ export default memo(function IdManager() {
                                         width: "100%",
                                         display: "flex",
                                         justifyContent: "center",
+                                        paddingY: "10px",
+                                        borderTop:
+                                            "1px solid var(--q-border-color)",
                                     }}
                                 >
-                                    <QLoading />
+                                    <QLoadingBlob />
                                 </Box>
                             ) : (
                                 ids?.map((computorIdData, renderIndex) => (
@@ -381,41 +386,45 @@ export default memo(function IdManager() {
                                 display: "flex",
                                 justifyContent: "flex-end",
                                 paddingY: "5px",
-                                borderTop: "2px solid black",
+                                borderTop: "2px solid var(--q-border-color)",
                             }}
                         >
-                            <QButton
+                            <QButtonSimple
                                 onClick={handleAddNewId}
                                 customCss={{
                                     marginX: "5px",
+                                    borderRadius: "5px",
                                 }}
                                 effect3d={false}
                                 text="Add New Id"
                                 isDisabled={isThereUncompletedId}
                             />
-                            <QButton
+                            <QButtonSimple
                                 onClick={handleCancel}
                                 customCss={{
                                     marginX: "5px",
+                                    borderRadius: "5px",
                                 }}
                                 effect3d={false}
                                 text="Cancel"
                                 isDisabled={!canCancel}
                             />
                             {!isUpdateComputorIdsPending ? (
-                                <QButton
+                                <QButtonSimple
                                     onClick={handleSaveUpdateToServer}
                                     customCss={{
                                         marginX: "5px",
+                                        borderRadius: "5px",
                                     }}
                                     effect3d={false}
                                     text="Update"
                                 />
                             ) : (
-                                <QButton
+                                <QButtonSimple
                                     onClick={handleSaveUpdateToServer}
                                     customCss={{
                                         marginX: "5px",
+                                        borderRadius: "5px",
                                     }}
                                     isDisabled={true}
                                     effect3d={false}

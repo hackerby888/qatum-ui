@@ -3,6 +3,7 @@ import useGeneralGet from "@/apis/useGeneralGet";
 import useGeneralPost from "@/apis/useGeneralPost";
 import MaterialUIInput from "@/components/MaterialUIInput";
 import QButton from "@/components/QButton";
+import QButtonSimple from "@/components/QButtonSimple";
 import QSelect from "@/components/QSelect";
 import useGlobalStore, { GlobalStore } from "@/stores/useGlobalStore";
 import { EpochDbData, GlobalStats, QSelectOptions } from "@/types";
@@ -141,7 +142,6 @@ export default function PaymentConfigForm({
             enable: option.value,
         });
         updatePaymentEnable({ enable: option.value });
-        globalStore.handleOnpenAndSetSnackbar("ok");
     };
 
     const handleDelete = (chipToDelete: EpochChipData) => () => {
@@ -151,7 +151,11 @@ export default function PaymentConfigForm({
     };
 
     let prepareLast100Epochs = () => {
-        let epochs = [];
+        let epochs: {
+            text: string;
+            value: number;
+        }[] = [];
+        if (!globalStats) return epochs;
         for (let i = 0; i < 100; i++) {
             epochs.push({
                 text: `E${globalStats.epoch - i}`,
@@ -333,34 +337,38 @@ export default function PaymentConfigForm({
                         }}
                     >
                         {" "}
-                        <QButton
+                        <QButtonSimple
                             onClick={handleAddNewEpochToPaying}
                             effect3d={false}
                             customCss={{
                                 display: "flex",
                                 justifyContent: "center",
                                 width: "50%",
+                                borderTop: "none",
+                                borderRight: "none",
                             }}
                             text="Add"
                         />
                         {!isEpochsUpdatePayingPending ? (
-                            <QButton
+                            <QButtonSimple
                                 onClick={handleUpdateEpochsPaying}
                                 effect3d={false}
                                 customCss={{
                                     display: "flex",
                                     justifyContent: "center",
                                     width: "50%",
+                                    borderTop: "none",
                                 }}
                                 text="Save"
                             />
                         ) : (
-                            <QButton
+                            <QButtonSimple
                                 effect3d={false}
                                 customCss={{
                                     display: "flex",
                                     justifyContent: "center",
                                     width: "50%",
+                                    borderTop: "none",
                                 }}
                                 text="..."
                                 isDisabled={true}
@@ -404,7 +412,7 @@ export default function PaymentConfigForm({
                         justifyContent: "center",
                         position: "relative",
                         alignItems: "center",
-                        border: "1px solid black",
+                        border: "1px solid var(--q-border-color)",
                         paddingLeft: "10px",
                         flex: 1,
                     }}
@@ -478,7 +486,7 @@ export default function PaymentConfigForm({
                     onSelected={handleOnChangeEpoch}
                     options={prepareLast100Epochs()}
                     customCss={{
-                        border: "1px solid black",
+                        border: "1px solid var(--q-border-color)",
                         borderLeft: "none",
                         borderRight: "none",
                         padding: "3px 10px",
@@ -535,7 +543,7 @@ export default function PaymentConfigForm({
                 )}
 
                 {!isUpdateEpochDataPending ? (
-                    <QButton
+                    <QButtonSimple
                         onClick={handleOnSave}
                         customCss={{
                             marginLeft: "10px",
@@ -543,7 +551,7 @@ export default function PaymentConfigForm({
                         text="Save"
                     />
                 ) : (
-                    <QButton
+                    <QButtonSimple
                         isDisabled={true}
                         customCss={{
                             marginLeft: "10px",
