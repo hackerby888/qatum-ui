@@ -1,6 +1,7 @@
 import { API_SERVER } from "@/consts/apiServer";
 import { useMutation } from "@tanstack/react-query";
 import handleApiResponse from "./handleApiResponse";
+import { Storage } from "@/utils/storage";
 
 export default function useGeneralPost({
     queryKey,
@@ -28,6 +29,7 @@ export default function useGeneralPost({
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
+                    token: "Bearer " + Storage.getLoginCredential(),
                 },
                 body: JSON.stringify(data),
             });

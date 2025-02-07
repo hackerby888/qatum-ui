@@ -1,8 +1,10 @@
 import { API_SERVER } from "@/consts/apiServer";
 import { useQuery } from "@tanstack/react-query";
 import handleApiResponse from "./handleApiResponse";
+import { Storage } from "@/utils/storage";
+import { useNavigate } from "react-router";
 
-export default function useGeneralGet({
+export default function useGeneralGet<T>({
     queryKey,
     path,
     enabled = true,
@@ -15,7 +17,8 @@ export default function useGeneralGet({
         [key: string]: any;
     };
 }) {
-    return useQuery({
+    let navigate = useNavigate();
+    return useQuery<T>({
         queryKey,
         queryFn: async () => {
             let reqQueryString = "";
@@ -26,8 +29,12 @@ export default function useGeneralGet({
             } else {
                 reqQueryString = "_=blank";
             }
-            let res = await fetch(`${API_SERVER}/${path}?${reqQueryString}`);
-            return handleApiResponse(res);
+            let res = await fetch(`${API_SERVER}/${path}?${reqQueryString}`, {
+                headers: {
+                    token: "Bearer " + Storage.getLoginCredential(),
+                },
+            });
+            return handleApiResponse(res, navigate);
         },
         enabled,
     });

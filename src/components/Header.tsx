@@ -1,3 +1,4 @@
+import { Storage } from "@/utils/storage";
 import { Box, Container } from "@mui/material";
 
 export default function Header() {
@@ -36,6 +37,26 @@ export default function Header() {
                         Q
                     </Box>
                     <Box>atum</Box>
+                    {Storage.getLoginCredential() && (
+                        <Box
+                            sx={{
+                                marginLeft: "5px",
+                                fontSize: ".9rem",
+                            }}
+                        >
+                            <Box
+                                className="jura-font"
+                                sx={{
+                                    border: "1px solid var(--q-border-color)",
+                                    padding: "3px",
+                                    borderRadius: "5px",
+                                    fontWeight: "bold",
+                                }}
+                            >
+                                Admin
+                            </Box>
+                        </Box>
+                    )}
                 </Box>
                 <Box
                     sx={{

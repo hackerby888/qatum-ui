@@ -10,12 +10,27 @@ import PaymentManager from "./pages/PaymentManager/PaymentManager";
 import Stats from "./pages/Stats/Stats";
 import useGlobalStore, { GlobalStore } from "./stores/useGlobalStore";
 import Header from "./components/Header";
-
+import ElectricalServicesRoundedIcon from "@mui/icons-material/ElectricalServicesRounded";
+import GrainRoundedIcon from "@mui/icons-material/GrainRounded";
+import SolutionsManager from "./pages/SolutionsManager/SolutionsManager";
+import ClusterManager from "./pages/ClusterManager/ClusterManager";
+import AdminPanelSettingsRoundedIcon from "@mui/icons-material/AdminPanelSettingsRounded";
+import {
+    Navigate,
+    Route,
+    Routes,
+    useLocation,
+    useNavigate,
+} from "react-router";
+import Login from "./pages/Login/Login";
+import { Storage } from "./utils/storage";
 function App() {
-    const [page, setPage] = useState("stats");
     let [showSnackbar, setShowSnackbar] = useState(false);
     let [snackbarMessage, setSnackbarMessage] = useState("");
     let globalStore: GlobalStore = useGlobalStore();
+    const navigate = useNavigate();
+    const location = useLocation();
+
     const handleOnCloseSnackbar = () => {
         setShowSnackbar(false);
     };
@@ -23,6 +38,10 @@ function App() {
     const handleOnpenAndSetSnackbar = (message: string) => {
         setSnackbarMessage(message);
         setShowSnackbar(true);
+    };
+
+    const handleNavigate = (page: string) => {
+        navigate(page);
     };
 
     useEffect(() => {
@@ -60,8 +79,10 @@ function App() {
                     <Box
                         sx={{
                             display: "flex",
-                            height: "fit-content",
-                            width: "fit-content",
+                            height: "100%",
+                            width: "100%",
+                            //  flexWrap: "wrap",
+                            overflowX: "auto",
                         }}
                     >
                         {[
@@ -77,17 +98,29 @@ function App() {
                                 text: "Payment Manager",
                                 icon: LocalAtmRoundedIcon,
                             },
+                            {
+                                text: "Solutions Manager",
+                                icon: GrainRoundedIcon,
+                            },
+                            {
+                                text: "Cluster Manager",
+                                icon: ElectricalServicesRoundedIcon,
+                            },
+                            {
+                                text: "Login",
+                                icon: AdminPanelSettingsRoundedIcon,
+                            },
                         ].map((item) => {
                             let isActive =
-                                item.text.replace(/ /g, "").toLowerCase() ===
-                                page;
+                                item.text.replace(/ /g, "-").toLowerCase() ===
+                                location.pathname.replace("/", "");
                             return (
                                 <Box
                                     key={item.text}
                                     onClick={() =>
-                                        setPage(
+                                        handleNavigate(
                                             item.text
-                                                .replace(/ /g, "")
+                                                .replace(/ /g, "-")
                                                 .toLowerCase()
                                         )
                                     }
@@ -100,7 +133,9 @@ function App() {
                                         userSelect: "none",
                                         cursor: "pointer",
                                         padding: "10px",
-                                        display: "flex",
+                                        display: Storage.getLoginCredential()
+                                            ? "flex"
+                                            : "none",
                                         alignItems: "center",
                                     }}
                                 >
@@ -123,13 +158,28 @@ function App() {
                             height: "100%",
                         }}
                     >
-                        {
-                            {
-                                stats: <Stats />,
-                                idmanager: <IdManager />,
-                                paymentmanager: <PaymentManager />,
-                            }[page]
-                        }
+                        <Routes>
+                            {" "}
+                            <Route path="stats" element={<Stats />} />
+                            <Route path="login" element={<Login />} />
+                            <Route path="id-manager" element={<IdManager />} />
+                            <Route
+                                path="payment-manager"
+                                element={<PaymentManager />}
+                            />
+                            <Route
+                                path="solutions-manager"
+                                element={<SolutionsManager />}
+                            />
+                            <Route
+                                path="cluster-manager"
+                                element={<ClusterManager />}
+                            />
+                            <Route
+                                path="*"
+                                element={<Navigate to="/stats" />}
+                            />
+                        </Routes>
                     </Box>
                 </Box>
 

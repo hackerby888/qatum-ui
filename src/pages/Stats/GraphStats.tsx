@@ -2,6 +2,9 @@ import queryKeys from "@/apis/getQueryKey";
 import useGeneralGet from "@/apis/useGeneralGet";
 import QLoadingBlob from "@/components/QLoadingBlob";
 import { ONE_DAY, THREE_MINUTES } from "@/consts/time";
+import useGraphHighStore, {
+    GraphHeightStore,
+} from "@/stores/useGraphHighStore";
 import { GlobalStats } from "@/types";
 import { Box, Skeleton } from "@mui/material";
 import ReactECharts from "echarts-for-react";
@@ -27,7 +30,6 @@ function formaterDivide(val: number) {
 }
 
 export default function GraphStats() {
-    let [graphHeight, setGraphHeight] = useState(0);
     let {
         data: globalStats,
         isFetching,
@@ -39,14 +41,24 @@ export default function GraphStats() {
         queryKey: queryKeys["globalStats"](),
     }) as any;
 
+    let graphStore: GraphHeightStore = useGraphHighStore();
+
     useEffect(() => {
         let statsWrapper = document.getElementById("stats-main-wrapper");
         let statsGraph = document.getElementById("stats-graph");
-
         if (statsWrapper && statsGraph) {
-            setGraphHeight(statsWrapper.offsetHeight);
+            if (isFetching)
+                graphStore.setGraphHeight(statsWrapper.clientHeight);
+            else {
+                //sum all height of children in centralStas
+                statsGraph.style.display = "none";
+                setTimeout(() => {
+                    graphStore.setGraphHeight(statsWrapper.clientHeight);
+                    statsGraph.style.display = "block";
+                }, 0);
+            }
         }
-    }, []);
+    }, [globalStats, isFetching]);
 
     let needToFillList =
         ONE_DAY / THREE_MINUTES - globalStats?.hashrateList?.length || 0;
@@ -72,7 +84,7 @@ export default function GraphStats() {
             id="stats-graph"
             sx={{
                 flex: 1,
-                height: `${graphHeight}px`,
+                height: `${graphStore.graphHeight}px`,
                 // boxShadow: "0px 0px 5px 0px #ccc",
                 paddingTop: "10px",
                 border: "1px solid var(--q-border-color)",
@@ -87,7 +99,7 @@ export default function GraphStats() {
                 <ReactECharts
                     style={{
                         width: "100%",
-                        height: `${graphHeight}px`,
+                        height: `${graphStore.graphHeight}px`,
                     }}
                     option={{
                         // visualMap: [
