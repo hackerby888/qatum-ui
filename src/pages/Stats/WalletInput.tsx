@@ -26,6 +26,11 @@ export default function WalletInput({
         >
             {" "}
             <MaterialUIInput
+                onKeydown={(e: any) => {
+                    if (e.key === "Enter") {
+                        onCommit(wallet);
+                    }
+                }}
                 value={wallet}
                 onChange={(e: any) => setWallet(e.target.value)}
                 customCss={{
