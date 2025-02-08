@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import "./App.css";
-import { Box, Container, Divider, Snackbar } from "@mui/material";
+import { Box, Container, Snackbar } from "@mui/material";
 import QueryStatsRoundedIcon from "@mui/icons-material/QueryStatsRounded";
 import DvrRoundedIcon from "@mui/icons-material/DvrRounded";
 import LocalAtmRoundedIcon from "@mui/icons-material/LocalAtmRounded";
