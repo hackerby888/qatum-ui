@@ -2,9 +2,7 @@ import queryKeys from "@/apis/getQueryKey";
 import useGeneralGet from "@/apis/useGeneralGet";
 import useGeneralPost from "@/apis/useGeneralPost";
 import MaterialUIInput from "@/components/MaterialUIInput";
-import QButton from "@/components/QButton";
 import QButtonSimple from "@/components/QButtonSimple";
-import QLoadingCircle from "@/components/QLoadingCircle";
 import { GlobalStats, MiningConfig } from "@/types";
 import { Box } from "@mui/material";
 import { useEffect, useState } from "react";
@@ -54,7 +52,7 @@ export default function MiningStrategy({
     let [solutionText, setSolutionText] = useState("");
     let [avgOverRateText, setAvgOverRateText] = useState("");
 
-    let [miningStrategyState, setMiningStrategyState] = useState<MiningConfig>({
+    let [_, setMiningStrategyState] = useState<MiningConfig>({
         diffHashRateToBalance: 0,
         diffSolutionToBalance: 0,
         avgOverRate: 0,

@@ -1,5 +1,4 @@
 import { Box } from "@mui/material";
-import QButton from "@/components/QButton";
 import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
 import { ComputorIdDataApi, QSelectOptions } from "@/types";
 import { memo, useState } from "react";
@@ -11,7 +10,6 @@ import QLoadingCircle from "@/components/QLoadingCircle";
 import formatNumber from "@/utils/number";
 import useGeneralGet from "@/apis/useGeneralGet";
 import queryKeys from "@/apis/getQueryKey";
-import { v4 } from "uuid";
 import QButtonSimple from "@/components/QButtonSimple";
 
 const trueFalseOptions: QSelectOptions[] = [

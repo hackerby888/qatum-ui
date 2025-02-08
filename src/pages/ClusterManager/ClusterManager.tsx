@@ -1,14 +1,10 @@
-import QDivider from "@/components/QDivider";
-import Skeletons from "@/components/Skeletons";
 import { Box } from "@mui/material";
 import queryKeys from "@/apis/getQueryKey";
 import useGeneralGet from "@/apis/useGeneralGet";
-import QSelect from "@/components/QSelect";
-import { ClusterData, PaymentDbDataWithReward, PaymentDbState } from "@/types";
-import { useEffect, useState } from "react";
+import { ClusterData } from "@/types";
+import { useEffect } from "react";
 import FilterListRoundedIcon from "@mui/icons-material/FilterListRounded";
 import { useQueryClient } from "@tanstack/react-query";
-import formatNumber from "@/utils/number";
 import QButtonSimple from "@/components/QButtonSimple";
 import useGeneralPost from "@/apis/useGeneralPost";
 

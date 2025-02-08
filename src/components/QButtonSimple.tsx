@@ -4,10 +4,8 @@ import { Box, SxProps } from "@mui/material";
 export default function QButtonSimple({
     text,
     customCss,
-    effect3d = true,
     onClick,
     children,
-    effect2dHoverColor,
     isDisabled,
 }: {
     text: string;

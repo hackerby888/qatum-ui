@@ -1,11 +1,9 @@
-import { Box, Snackbar } from "@mui/material";
+import { Box } from "@mui/material";
 import FilterListRoundedIcon from "@mui/icons-material/FilterListRounded";
 import { memo, useEffect, useState } from "react";
-import QButton from "@/components/QButton";
 import ComputorIdRow from "./ComputorIdRow";
 import { useQueryClient } from "@tanstack/react-query";
 import { ComputorIdDataApi } from "@/types";
-import QLoading from "@/components/QLoading";
 import MiningStrategy from "./MiningStrategy";
 import useGeneralGet from "@/apis/useGeneralGet";
 import queryKeys from "@/apis/getQueryKey";

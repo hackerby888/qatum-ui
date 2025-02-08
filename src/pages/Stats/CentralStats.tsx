@@ -2,13 +2,9 @@ import queryKeys from "@/apis/getQueryKey";
 import useGeneralGet from "@/apis/useGeneralGet";
 import QDivider from "@/components/QDivider";
 import Skeletons from "@/components/Skeletons";
-import useGraphHighStore, {
-    GraphHeightStore,
-} from "@/stores/useGraphHighStore";
 import { GlobalStats } from "@/types";
 import formatNumber from "@/utils/number";
 import { Box } from "@mui/material";
-import { useEffect } from "react";
 
 export default function CentralStats() {
     let {

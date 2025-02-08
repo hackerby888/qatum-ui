@@ -4,17 +4,10 @@ import { Box } from "@mui/material";
 import queryKeys from "@/apis/getQueryKey";
 import useGeneralGet from "@/apis/useGeneralGet";
 import QSelect from "@/components/QSelect";
-import {
-    PaymentDbDataWithReward,
-    PaymentDbState,
-    Solution,
-    SolutionNetState,
-    SolutionsApiData,
-} from "@/types";
+import { SolutionNetState, SolutionsApiData } from "@/types";
 import { useState } from "react";
 import FilterListRoundedIcon from "@mui/icons-material/FilterListRounded";
 import { useQueryClient } from "@tanstack/react-query";
-import formatNumber from "@/utils/number";
 
 function StatusDot({ status }: { status: boolean }) {
     return (
@@ -78,6 +71,18 @@ export default function SolutionsManager() {
         });
     };
 
+    let numberOfIsShareSolution = data?.solutionVerifiedQueue.filter(
+        (sol) => (sol as SolutionNetState).isShare
+    ).length;
+
+    let numberOfIsSolutionSolution = data?.solutionVerifiedQueue.filter(
+        (sol) => (sol as SolutionNetState).isSolution
+    ).length;
+
+    let numberOfIsWrittenSolution = data?.solutionVerifiedQueue.filter(
+        (sol) => (sol as SolutionNetState).isWritten
+    ).length;
+
     let queryClient = useQueryClient();
 
     return (
@@ -104,7 +109,7 @@ export default function SolutionsManager() {
                         padding: "10px",
                         display: "flex",
                         flexDirection: "column",
-                        width: "30%",
+                        width: "60%",
                     }}
                 >
                     <Box>General Stats</Box>
@@ -135,9 +140,10 @@ export default function SolutionsManager() {
                                             .length || 0,
                                 },
                                 {
-                                    text: "Solutions Verified",
-                                    value:
-                                        data?.solutionVerifiedQueue.length || 0,
+                                    text: "Solutions Verified (Total/IsShare/IsSolution/IsWritten)",
+                                    value: `${
+                                        data?.solutionVerifiedQueue.length || 0
+                                    } / ${numberOfIsShareSolution} / ${numberOfIsSolutionSolution} / ${numberOfIsWrittenSolution}`,
                                 },
                                 {
                                     text: "Total Solutions Received",

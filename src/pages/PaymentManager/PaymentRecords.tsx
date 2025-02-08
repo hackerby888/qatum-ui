@@ -19,7 +19,7 @@ const sortMap: {
 };
 
 export default function PaymentRecords({
-    setSelectedEpoch,
+    setSelectedEpoch: _,
     selectedEpoch,
 }: {
     setSelectedEpoch: (epoch: number) => void;

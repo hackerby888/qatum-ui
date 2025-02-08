@@ -6,7 +6,6 @@ import { v4 } from "uuid";
 import { useQueryClient } from "@tanstack/react-query";
 import useGeneralGet from "@/apis/useGeneralGet";
 import queryKeys from "@/apis/getQueryKey";
-import QLoadingBlob from "@/components/QLoadingBlob";
 
 let sortMap = {
     name: "asc",
@@ -31,7 +30,7 @@ export default function QMinerTable({ wallet }: { wallet: string }) {
         path: "workers",
         reqQuery: {
             wallet,
-            needActive: true,
+            needActive: false,
         },
         enabled: !!wallet,
     }) as any;
@@ -66,6 +65,8 @@ export default function QMinerTable({ wallet }: { wallet: string }) {
 
         queryClient.setQueryData(queryKey, queryData);
     };
+
+    let activeWorkers = workerStats?.filter((worker) => worker.isActive);
 
     return (
         <Box
@@ -237,14 +238,16 @@ export default function QMinerTable({ wallet }: { wallet: string }) {
                         Loading...
                     </Box>
                 ) : (
-                    workerStats?.map((worker, i) => (
-                        <QMinerRow
-                            isShareModeEpoch={globalStats?.isShareModeEpoch}
-                            data={worker}
-                            key={v4()}
-                            index={i}
-                        />
-                    ))
+                    activeWorkers?.map((worker, i) =>
+                        worker.isActive ? (
+                            <QMinerRow
+                                isShareModeEpoch={globalStats?.isShareModeEpoch}
+                                data={worker}
+                                key={v4()}
+                                index={i}
+                            />
+                        ) : null
+                    )
                 )}
 
                 {!isFetchingWorkerStats && workerStatsError && (

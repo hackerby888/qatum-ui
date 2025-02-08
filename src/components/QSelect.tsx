@@ -1,9 +1,9 @@
 import { Theme } from "@emotion/react";
 import { Box, SxProps } from "@mui/material";
 import { QSelectOptions } from "../types";
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import ArrowDropDownRoundedIcon from "@mui/icons-material/ArrowDropDownRounded";
-import ArrowDropUpRoundedIcon from "@mui/icons-material/ArrowDropUpRounded";
+
 export default function QSelect({
     options,
     isPlaceBottom,

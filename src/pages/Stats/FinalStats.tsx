@@ -1,6 +1,5 @@
 import queryKeys from "@/apis/getQueryKey";
 import useGeneralGet from "@/apis/useGeneralGet";
-import QButtonSimple from "@/components/QButtonSimple";
 import Divider from "@/components/QDivider";
 import Skeletons from "@/components/Skeletons";
 import { GlobalStats, QWorkerApi } from "@/types";
@@ -32,10 +31,11 @@ export default function FinalStats({ wallet }: { wallet: string }) {
         path: "globalStats",
         queryKey: queryKeys["globalStats"](),
     }) as any;
-    let totalPerformance = workerStats?.reduce((acc, curr) => {
+    let activeWorkers = workerStats?.filter((worker) => worker.isActive);
+    let totalPerformance = activeWorkers?.reduce((acc, curr) => {
         return acc + curr.hashrate;
     }, 0);
-    let totalWorkers = workerStats?.length;
+    let totalWorkers = activeWorkers?.length;
     let totalShares = workerStats?.reduce((acc, curr) => {
         return acc + curr.solutionsShare;
     }, 0);

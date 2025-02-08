@@ -6,9 +6,9 @@ import useGraphHighStore, {
     GraphHeightStore,
 } from "@/stores/useGraphHighStore";
 import { GlobalStats } from "@/types";
-import { Box, Skeleton } from "@mui/material";
+import { Box } from "@mui/material";
 import ReactECharts from "echarts-for-react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 function formaterDivide(val: number) {
     if (val < 1000) {

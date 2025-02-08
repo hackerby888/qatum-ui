@@ -2,7 +2,6 @@ import queryKeys from "@/apis/getQueryKey";
 import useGeneralGet from "@/apis/useGeneralGet";
 import useGeneralPost from "@/apis/useGeneralPost";
 import MaterialUIInput from "@/components/MaterialUIInput";
-import QButton from "@/components/QButton";
 import QButtonSimple from "@/components/QButtonSimple";
 import QSelect from "@/components/QSelect";
 import useGlobalStore, { GlobalStore } from "@/stores/useGlobalStore";
@@ -43,7 +42,6 @@ export default function PaymentConfigForm({
 
     let {
         data: apiEpochsPaying,
-        isFetching: isEpochsPayingFetching,
     }: {
         data: {
             epochs: number[];
