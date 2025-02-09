@@ -7,17 +7,22 @@ import useInfiniteGet from "@/apis/useInfiniteGet";
 import queryKeys from "@/apis/getQueryKey";
 import CreditScoreRoundedIcon from "@mui/icons-material/CreditScoreRounded";
 import { v4 } from "uuid";
+import Skeletons from "@/components/Skeletons";
 const PAYMENTS_LIMIT = 20;
 export default function Payments({ wallet }: { wallet: string }) {
     let {
         data: payments,
         isFetchingNextPage,
         fetchNextPage,
+        isFetching,
+        error,
     }: {
         data: {
             pages: PaymentDbDataWithReward[][];
         };
         isFetchingNextPage: boolean;
+        isFetching: boolean;
+        error: any;
         fetchNextPage: () => void;
     } = useInfiniteGet({
         queryKey: queryKeys["payments"]({ wallet }),
@@ -26,6 +31,7 @@ export default function Payments({ wallet }: { wallet: string }) {
             wallet,
         },
         limit: PAYMENTS_LIMIT,
+        enabled: !!wallet,
     }) as any;
 
     const handleOpenNewTab = (url: string) => {
@@ -34,6 +40,8 @@ export default function Payments({ wallet }: { wallet: string }) {
 
     let isLastPage =
         payments?.pages[payments?.pages.length - 1].length < PAYMENTS_LIMIT;
+
+    console.log("payments", error);
     return (
         <Box
             sx={{
@@ -45,9 +53,14 @@ export default function Payments({ wallet }: { wallet: string }) {
                 flexDirection: "column",
                 overflowY: "auto",
                 maxHeight: "300px",
-                boxShadow: "0px 0px 5px 0px #ccc",
-                padding: "5px",
+                //     boxShadow: "0px 0px 5px 0px #ccc",
+                border: "1px solid var(--q-border-color)",
                 borderRadius: "5px",
+                padding: "10px",
+                marginTop: {
+                    xs: "10px",
+                    md: "0",
+                },
             }}
         >
             <Box
@@ -59,65 +72,132 @@ export default function Payments({ wallet }: { wallet: string }) {
             >
                 Payments
             </Box>
-            {payments?.pages?.map((page, _) =>
-                page.map((payment, j) => (
-                    <Box
-                        onClick={
-                            payment.isPaid
-                                ? () =>
-                                      handleOpenNewTab(
-                                          `https://explorer.qubic.org/network/tx/${payment.txId}?type=latest`
-                                      )
-                                : () => {}
-                        }
-                        key={v4()}
-                        sx={{
-                            display: "flex",
-                            justifyContent: "center",
-                            width: "100%",
-                            border: "1px solid #ccc",
-                            paddingY: "5px",
-                            paddingX: "5px",
-                            alignItems: "center",
-                            cursor: "pointer",
-                            "&:hover": payment.isPaid
-                                ? {
-                                      backgroundColor: "var(--q-main-color)",
-                                      color: "white",
-                                  }
-                                : {},
-                        }}
-                    >
+            {payments?.pages?.map((page, i) =>
+                page.map((payment, j) => {
+                    let isLastPayment =
+                        i === payments.pages.length - 1 &&
+                        j === page.length - 1;
+                    return (
                         <Box
+                            onClick={
+                                payment.isPaid
+                                    ? () =>
+                                          handleOpenNewTab(
+                                              `https://explorer.qubic.org/network/tx/${payment.txId}?type=latest`
+                                          )
+                                    : () => {}
+                            }
+                            key={v4()}
                             sx={{
-                                display: "flex",
-                                alignItems: "center",
-                            }}
-                        >
-                            {payment.isPaid ? (
-                                <CreditScoreRoundedIcon />
-                            ) : (
-                                <HourglassTopRoundedIcon />
-                            )}
-                        </Box>
-                        <Box
-                            className="jura-font"
-                            sx={{
-                                width: "100%",
                                 display: "flex",
                                 justifyContent: "center",
+                                width: "100%",
+                                borderBottom: !isLastPayment
+                                    ? "1px solid var(--q-border-color)"
+                                    : "none",
+                                paddingY: "5px",
+                                paddingX: "5px",
+                                alignItems: "center",
+                                cursor: payment.isPaid ? "pointer" : "default",
+                                "&:hover": payment.isPaid
+                                    ? {
+                                          backgroundColor:
+                                              "var(--q-background-color)",
+                                          // color: "white !important",
+                                      }
+                                    : {},
                             }}
                         >
-                            {formatNumber(payment.reward)} @{" "}
-                            {payment.solutionsShare > 0
-                                ? `${payment.solutionsShare} Shares`
-                                : `${payment.solutionsWritten} Solutions`}
+                            <Box
+                                sx={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                }}
+                            >
+                                {payment.isPaid ? (
+                                    <CreditScoreRoundedIcon
+                                        fontSize="small"
+                                        sx={{
+                                            color: "inherit",
+                                        }}
+                                    />
+                                ) : (
+                                    <HourglassTopRoundedIcon
+                                        fontSize="small"
+                                        sx={{
+                                            color: "inherit",
+                                        }}
+                                    />
+                                )}
+                            </Box>
+                            <Box
+                                className="jura-font"
+                                sx={{
+                                    width: "100%",
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    fontSize: ".9rem",
+                                    alignItems: "center",
+                                }}
+                            >
+                                <Box
+                                    className="jura-font"
+                                    sx={{
+                                        width: "45%",
+                                        display: "flex",
+                                        justifyContent: "flex-end",
+                                    }}
+                                >
+                                    {" "}
+                                    {formatNumber(payment.reward)} QUBIC
+                                </Box>
+                                <Box
+                                    sx={{
+                                        width: "5%",
+                                        display: "flex",
+                                        justifyContent: "center",
+                                    }}
+                                >
+                                    <Box
+                                        sx={{
+                                            width: "5px",
+                                            height: "5px",
+                                            background: payment.isPaid
+                                                ? "var(--q-main-color)"
+                                                : "red",
+                                            borderRadius: "50%",
+                                            marginX: "5px",
+                                        }}
+                                    ></Box>
+                                </Box>
+                                <Box
+                                    className="jura-font"
+                                    sx={{
+                                        width: "45%",
+                                        display: "flex",
+                                        justifyContent: "flex-start",
+                                    }}
+                                >
+                                    {payment.solutionsShare > 0
+                                        ? `${payment.solutionsShare} Shares`
+                                        : `${payment.solutionsWritten} Solutions`}
+                                </Box>
+                            </Box>
+                            <Box
+                                className="jura-font"
+                                sx={{
+                                    fontWeight: "bold",
+                                    fontSize: ".9rem",
+                                }}
+                            >
+                                E{payment.epoch}
+                            </Box>
                         </Box>
-                        <Box>E{payment.epoch}</Box>
-                    </Box>
-                ))
+                    );
+                })
             )}
-            {!isLastPage ? (
+            {isFetching && <Skeletons row={3} />}
+            {!isLastPage && !isFetching && payments ? (
                 <Box
                     onClick={
                         isFetchingNextPage ? () => {} : () => fetchNextPage()
@@ -143,6 +223,22 @@ export default function Payments({ wallet }: { wallet: string }) {
                     )}
                 </Box>
             ) : null}
+
+            {error && (
+                <Box
+                    sx={{
+                        width: "100%",
+                        color: "red",
+                        display: "flex",
+                        justifyContent: "center",
+
+                        height: "100%",
+                        alignItems: "center",
+                    }}
+                >
+                    Error {`${error}`}
+                </Box>
+            )}
         </Box>
     );
 }

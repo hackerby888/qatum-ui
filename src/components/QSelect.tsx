@@ -3,7 +3,7 @@ import { Box, SxProps } from "@mui/material";
 import { QSelectOptions } from "../types";
 import React, { useState } from "react";
 import ArrowDropDownRoundedIcon from "@mui/icons-material/ArrowDropDownRounded";
-import ArrowDropUpRoundedIcon from "@mui/icons-material/ArrowDropUpRounded";
+
 export default function QSelect({
     options,
     isPlaceBottom,
@@ -19,22 +19,24 @@ export default function QSelect({
     listWrapperCustomCss?: SxProps<Theme>;
     onSelected?: (options: QSelectOptions) => void;
 }) {
+    let [isShowingList, setIsShowingList] = useState(false);
     let [selected, setSelected] = useState<QSelectOptions | null>(
         options.find((option) => option.value === value) ||
             options.find((option) => option.isDefault) ||
             options[0]
     );
+
     return (
         //@ts-ignore
         <Box
+            onClick={() => {
+                setIsShowingList(!isShowingList);
+            }}
             sx={{
                 display: "flex",
                 justifyContent: "center",
                 cursor: "pointer",
                 position: "relative",
-                "&:hover div": {
-                    display: "flex",
-                },
                 ...selected?.customCss,
                 ...customCss,
             }}
@@ -48,7 +50,7 @@ export default function QSelect({
                     zIndex: 2,
                     left: "0",
                     right: "0",
-                    display: "none",
+                    display: isShowingList ? "flex" : "none",
                     alignItems: "center",
                     justifyContent: "center",
                     flexDirection: "column",
@@ -73,6 +75,7 @@ export default function QSelect({
                         <React.Fragment key={index}>
                             <Box
                                 onClick={() => {
+                                    setIsShowingList(false);
                                     setSelected(option);
                                     onSelected && onSelected(option);
                                 }}
@@ -87,6 +90,8 @@ export default function QSelect({
                                     paddingX: "15px",
                                     display: "flex",
                                     justifyContent: "center",
+                                    alignItems: "center",
+                                    textAlign: "center",
                                     ...option.customCss,
                                 }}
                             >

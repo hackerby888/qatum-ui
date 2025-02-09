@@ -1,5 +1,5 @@
 import MaterialUIInput from "@/components/MaterialUIInput";
-import QButton from "@/components/QButton";
+import QButtonSimple from "@/components/QButtonSimple";
 import { Box } from "@mui/material";
 import { useState } from "react";
 
@@ -25,6 +25,11 @@ export default function WalletInput({
         >
             {" "}
             <MaterialUIInput
+                onKeydown={(e: any) => {
+                    if (e.key === "Enter") {
+                        onCommit(wallet);
+                    }
+                }}
                 value={wallet}
                 onChange={(e: any) => setWallet(e.target.value)}
                 customCss={{
@@ -32,11 +37,10 @@ export default function WalletInput({
                 }}
                 label="Enter your wallet"
             />
-            <QButton
+            <QButtonSimple
                 onClick={() => onCommit(wallet)}
                 customCss={{
-                    paddingTop: "14.5px",
-                    paddingBottom: "14.5px",
+                    height: "47px",
                 }}
                 text="Enter"
             />

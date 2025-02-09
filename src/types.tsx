@@ -7,6 +7,16 @@ export interface QSelectOptions {
     isDefault?: boolean;
 }
 
+export interface ClusterData {
+    randomUUID: string;
+    ip: string;
+    cpu: string;
+    threads: number;
+    solutionsVerified: number;
+    isConnected: boolean;
+    useThreads: number;
+}
+
 export interface GlobalStats {
     avgScore: number;
     epoch: number;
@@ -91,6 +101,55 @@ export interface EpochDbData {
     epoch: number;
     solutionValue: number;
     shareValue: number;
+}
+
+export interface Solution {
+    seed: string;
+    nonce: string;
+    computorId: string;
+    md5Hash: string;
+    submittedAt: number;
+}
+
+export type SolutionPendingToProcess = Solution & {
+    wallet: string;
+    workerUUID: string;
+};
+
+export interface SolutionResult {
+    md5Hash: string;
+    resultScore: number;
+}
+
+export type SolutionNetState = Solution & {
+    resultScore: number;
+    isSolution: boolean;
+    isWritten: boolean;
+    isShare: boolean;
+};
+
+export interface SolutionsApiData {
+    solutionsPendingToGetProcessQueue: SolutionPendingToProcess[];
+    solutionQueue: Solution[];
+    solutionVerifyingQueue: Solution[];
+    solutionClusterVerifyingQueue: Solution[];
+    solutionVerifiedQueue: SolutionNetState[];
+}
+
+export interface NodesApiGetData {
+    nodeIps: string[];
+    nodeIpsInactive: string[];
+}
+
+export interface NodesApiPostData {
+    nodeIps: {
+        add: string[];
+        delete: string[];
+    };
+    nodeIpsInactive: {
+        add: string[];
+        delete: string[];
+    };
 }
 
 export type PaymentDbState = "all" | "unpaid" | "paid";

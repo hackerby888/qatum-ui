@@ -1,8 +1,7 @@
-import { Box, Chip, styled } from "@mui/material";
+import { Box } from "@mui/material";
 import { memo, useState } from "react";
 import PaymentConfigForm from "./PaymentConfigForm";
 import PaymentRecords from "./PaymentRecords";
-import MaterialUIInput from "@/components/MaterialUIInput";
 
 export default memo(function PaymentManager() {
     let [selectedEpoch, setSelectedEpoch] = useState(0);

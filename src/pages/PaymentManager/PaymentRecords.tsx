@@ -1,6 +1,5 @@
 import queryKeys from "@/apis/getQueryKey";
 import useGeneralGet from "@/apis/useGeneralGet";
-import QButton from "@/components/QButton";
 import QSelect from "@/components/QSelect";
 import { PaymentDbDataWithReward, PaymentDbState } from "@/types";
 import formatNumber from "@/utils/number";
@@ -20,7 +19,7 @@ const sortMap: {
 };
 
 export default function PaymentRecords({
-    setSelectedEpoch,
+    setSelectedEpoch: _,
     selectedEpoch,
 }: {
     setSelectedEpoch: (epoch: number) => void;
@@ -163,7 +162,7 @@ export default function PaymentRecords({
                     sx={{
                         display: "flex",
                         paddingY: "10px",
-                        borderBottom: "1px solid #ccc",
+                        borderBottom: "1px solid var(--q-border-color)",
                     }}
                 >
                     <Box
@@ -184,7 +183,7 @@ export default function PaymentRecords({
                             userSelect: "none",
                         }}
                     >
-                        WALLET{" "}
+                        Wallet{" "}
                         <FilterListRoundedIcon
                             sx={{ marginLeft: "3px", fontSize: "1rem" }}
                             fontSize="small"
@@ -268,7 +267,7 @@ export default function PaymentRecords({
                             sx={{
                                 display: "flex",
                                 paddingY: "10px",
-                                borderBottom: "1px solid #ccc",
+                                borderBottom: "1px solid var(--q-border-color)",
                             }}
                         >
                             <Box

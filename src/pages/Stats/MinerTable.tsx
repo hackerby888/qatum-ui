@@ -3,7 +3,6 @@ import FilterListRoundedIcon from "@mui/icons-material/FilterListRounded";
 import QMinerRow from "./MinerRow";
 import { GlobalStats, QWorkerApi } from "@/types";
 import { v4 } from "uuid";
-import QLoading from "@/components/QLoading";
 import { useQueryClient } from "@tanstack/react-query";
 import useGeneralGet from "@/apis/useGeneralGet";
 import queryKeys from "@/apis/getQueryKey";
@@ -20,17 +19,20 @@ let sortMap = {
 export default function QMinerTable({ wallet }: { wallet: string }) {
     let {
         data: workerStats,
-        isFetching,
+        isFetching: isFetchingWorkerStats,
+        error: workerStatsError,
     }: {
         data: QWorkerApi[];
         isFetching: boolean;
+        error: any;
     } = useGeneralGet({
         queryKey: queryKeys["workerStats"]({ wallet }),
         path: "workers",
         reqQuery: {
             wallet,
-            needActive: true,
+            needActive: false,
         },
+        enabled: !!wallet,
     }) as any;
 
     let {
@@ -64,6 +66,8 @@ export default function QMinerTable({ wallet }: { wallet: string }) {
         queryClient.setQueryData(queryKey, queryData);
     };
 
+    let activeWorkers = workerStats?.filter((worker) => worker.isActive);
+
     return (
         <Box
             sx={{
@@ -73,20 +77,21 @@ export default function QMinerTable({ wallet }: { wallet: string }) {
                     xs: ".8rem",
                     sm: "1rem",
                 },
-                boxShadow: "0px 0px 5px 0px #ccc",
-                padding: "10px",
                 borderRadius: "5px",
             }}
         >
             {/* title */}
             <Box
                 sx={{
-                    boxShadow:
-                        "-2px 0 0 0 black, 2px 0 0 0 black,  0 -2px 0 0 black,  0 2px 0 0 black",
+                    // boxShadow:
+                    //     "-2px 0 0 0 var(--q-border-color), 2px 0 0 0 var(--q-border-color),  0 -2px 0 0 var(--q-border-color),  0 2px 0 0 var(--q-border-color)",
                     display: "flex",
                     width: "100%",
-                    border: "1px solid black",
-                    fontWeight: "bold",
+                    border: "1px solid var(--q-border-color)",
+                    background: "var(--q-background-color)",
+                    paddingY: "5px",
+                    borderTopLeftRadius: "5px",
+                    borderTopRightRadius: "5px",
                 }}
             >
                 <Box
@@ -219,26 +224,44 @@ export default function QMinerTable({ wallet }: { wallet: string }) {
                     maxHeight: "50vh",
                 }}
             >
-                {isFetching ? (
+                {isFetchingWorkerStats ? (
                     <Box
                         sx={{
                             width: "100%",
                             display: "flex",
                             justifyContent: "center",
+                            border: "1px solid var(--q-border-color)",
+                            borderTop: "none",
+                            paddingY: "10px",
                         }}
                     >
-                        {" "}
-                        <QLoading />
+                        Loading...
                     </Box>
                 ) : (
-                    workerStats?.map((worker, i) => (
-                        <QMinerRow
-                            isShareModeEpoch={globalStats?.isShareModeEpoch}
-                            data={worker}
-                            key={v4()}
-                            index={i}
-                        />
-                    ))
+                    activeWorkers?.map((worker, i) =>
+                        worker.isActive ? (
+                            <QMinerRow
+                                isShareModeEpoch={globalStats?.isShareModeEpoch}
+                                data={worker}
+                                key={v4()}
+                                index={i}
+                            />
+                        ) : null
+                    )
+                )}
+
+                {!isFetchingWorkerStats && workerStatsError && (
+                    <Box
+                        sx={{
+                            width: "100%",
+                            display: "flex",
+                            justifyContent: "center",
+                            paddingY: "10px",
+                            border: "1px solid var(--q-border-color)",
+                            borderTop: "none",
+                            color: "red",
+                        }}
+                    >{`${workerStatsError}`}</Box>
                 )}
             </Box>
         </Box>

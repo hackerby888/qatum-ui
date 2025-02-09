@@ -1,13 +1,15 @@
 import queryKeys from "@/apis/getQueryKey";
 import useGeneralGet from "@/apis/useGeneralGet";
 import Divider from "@/components/QDivider";
+import Skeletons from "@/components/Skeletons";
 import { GlobalStats, QWorkerApi } from "@/types";
 import { Box } from "@mui/material";
+import NevermineBanner from "./NevermineBanner";
 
 export default function FinalStats({ wallet }: { wallet: string }) {
     let {
         data: workerStats,
-        isFetching: _,
+        isFetching: isFetchingWorkerStats,
     }: {
         data: QWorkerApi[];
         isFetching: boolean;
@@ -18,6 +20,7 @@ export default function FinalStats({ wallet }: { wallet: string }) {
             wallet,
             needActive: true,
         },
+        enabled: !!wallet,
     }) as any;
 
     let {
@@ -28,10 +31,11 @@ export default function FinalStats({ wallet }: { wallet: string }) {
         path: "globalStats",
         queryKey: queryKeys["globalStats"](),
     }) as any;
-    let totalPerformance = workerStats?.reduce((acc, curr) => {
+    let activeWorkers = workerStats?.filter((worker) => worker.isActive);
+    let totalPerformance = activeWorkers?.reduce((acc, curr) => {
         return acc + curr.hashrate;
     }, 0);
-    let totalWorkers = workerStats?.length;
+    let totalWorkers = activeWorkers?.length;
     let totalShares = workerStats?.reduce((acc, curr) => {
         return acc + curr.solutionsShare;
     }, 0);
@@ -47,83 +51,100 @@ export default function FinalStats({ wallet }: { wallet: string }) {
                 },
                 display: "flex",
                 flexDirection: "column",
-                boxShadow: "0px 0px 5px 0px #ccc",
-                padding: "5px",
-                borderRadius: "5px",
                 marginRight: "10px",
             }}
         >
+            {" "}
             <Box
-                className="jura-font"
                 sx={{
-                    paddingY: "5px",
-                    fontWeight: "bold",
+                    width: "100%",
                     display: "flex",
-                    alignItems: "center",
-                    // justifyContent: "center",
-                    paddingLeft: "5px",
+                    flexDirection: "column",
+                    //  boxShadow: "0px 0px 5px 0px #ccc",
+                    border: "1px solid var(--q-border-color)",
+                    borderRadius: "5px",
+                    padding: "5px",
+                    marginRight: "10px",
+                    height: "fit-content",
                 }}
             >
                 <Box
-                    sx={{
-                        marginRight: "5px",
-                        fontSize: "1.2rem",
-                    }}
-                >
-                    Epoch
-                </Box>{" "}
-                {globalStats?.epoch}
-            </Box>
-
-            {[
-                {
-                    text: "Your Total Performance",
-                    value: totalPerformance,
-                    unit: "It/s",
-                },
-                {
-                    text: "Your Total Workers",
-                    value: totalWorkers,
-                    unit: "",
-                },
-                globalStats?.isShareModeEpoch
-                    ? {
-                          text: "Your Total Shares",
-                          value: totalShares,
-                          unit: "Shares",
-                      }
-                    : {
-                          text: "Your Total Solutions",
-                          value: totalSolutions,
-                          unit: "Solutions",
-                      },
-            ].map((item) => (
-                <Box
-                    key={item.text}
+                    className="jura-font"
                     sx={{
                         paddingY: "5px",
-                        // borderBottom: "1px solid #ccc",
-                        paddingX: "5px",
+                        fontWeight: "bold",
                         display: "flex",
-                        width: "100%",
                         alignItems: "center",
+                        // justifyContent: "center",
+                        paddingLeft: "5px",
                     }}
-                    className="jura-font"
                 >
-                    {item.text} <Divider /> {item.value} {item.unit}
+                    <Box
+                        sx={{
+                            marginRight: "5px",
+                            fontSize: "1.2rem",
+                        }}
+                    >
+                        Epoch
+                    </Box>{" "}
+                    {globalStats?.epoch}
                 </Box>
-            ))}
 
-            <Box
-                sx={{
-                    display: "flex",
-                    flex: 1,
-                    width: "100%",
-                    alignItems: "flex-end",
-                }}
-            >
-                {" "}
+                {!isFetchingWorkerStats ? (
+                    [
+                        {
+                            text: "Your Total Performance",
+                            value: totalPerformance,
+                            unit: "It/s",
+                        },
+                        {
+                            text: "Your Total Workers",
+                            value: totalWorkers,
+                            unit: "",
+                        },
+                        globalStats?.isShareModeEpoch
+                            ? {
+                                  text: "Your Total Shares",
+                                  value: totalShares,
+                                  unit: "Shares",
+                              }
+                            : {
+                                  text: "Your Total Solutions",
+                                  value: totalSolutions,
+                                  unit: "Solutions",
+                              },
+                    ].map((item) => (
+                        <Box
+                            key={item.text}
+                            sx={{
+                                paddingY: "5px",
+                                // borderBottom: "1px solid #ccc",
+                                paddingX: "5px",
+                                display: "flex",
+                                width: "100%",
+                                alignItems: "center",
+                            }}
+                            className="jura-font"
+                        >
+                            {item.text} <Divider /> {item.value} {item.unit}
+                        </Box>
+                    ))
+                ) : (
+                    <Skeletons row={3} />
+                )}
+
+                <Box
+                    sx={{
+                        display: "flex",
+                        flex: 1,
+                        width: "100%",
+                        alignItems: "flex-end",
+                    }}
+                >
+                    {" "}
+                </Box>
             </Box>
+            <NevermineBanner />
         </Box>
     );
 }

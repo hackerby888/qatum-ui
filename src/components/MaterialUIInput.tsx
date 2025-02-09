@@ -1,5 +1,4 @@
-import { Box, styled, SxProps, TextField, Theme } from "@mui/material";
-import { useState } from "react";
+import { styled, SxProps, TextField, Theme } from "@mui/material";
 
 const CssTextField = styled(TextField)({
     "& label": {
@@ -23,15 +22,15 @@ const CssTextField = styled(TextField)({
             fontFamily: "Jura",
         },
         "& fieldset": {
-            borderColor: "black",
+            borderColor: "var(--q-border-color)",
             borderRadius: "0px",
         },
         "&:hover fieldset": {
-            borderColor: "black",
+            borderColor: "var(--q-border-color)",
             borderRadius: "none",
         },
         "&.Mui-focused fieldset": {
-            borderColor: "black",
+            borderColor: "var(--q-border-color)",
             borderRadius: "none",
         },
     },

@@ -1,7 +1,7 @@
-import { Box, Divider } from "@mui/material";
+import { Box } from "@mui/material";
 import React from "react";
 
-export default function QDivider({ py }: { py: string }) {
+export default function QPixelDivider({ py: _ }: { py: string }) {
     return (
         <React.Fragment>
             {" "}

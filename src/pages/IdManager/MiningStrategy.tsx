@@ -2,8 +2,7 @@ import queryKeys from "@/apis/getQueryKey";
 import useGeneralGet from "@/apis/useGeneralGet";
 import useGeneralPost from "@/apis/useGeneralPost";
 import MaterialUIInput from "@/components/MaterialUIInput";
-import QButton from "@/components/QButton";
-import QLoadingCircle from "@/components/QLoadingCircle";
+import QButtonSimple from "@/components/QButtonSimple";
 import { GlobalStats, MiningConfig } from "@/types";
 import { Box } from "@mui/material";
 import { useEffect, useState } from "react";
@@ -53,7 +52,7 @@ export default function MiningStrategy({
     let [solutionText, setSolutionText] = useState("");
     let [avgOverRateText, setAvgOverRateText] = useState("");
 
-    let [miningStrategyState, setMiningStrategyState] = useState<MiningConfig>({
+    let [_, setMiningStrategyState] = useState<MiningConfig>({
         diffHashRateToBalance: 0,
         diffSolutionToBalance: 0,
         avgOverRate: 0,
@@ -131,10 +130,12 @@ export default function MiningStrategy({
                     <Box
                         sx={{
                             paddingX: "12px",
-                            border: "1px solid black",
+                            border: "1px solid var(--q-border-color)",
                             borderRight: "none",
                             display: "flex",
                             alignItems: "center",
+                            justifyContent: "center",
+                            flex: 1,
                         }}
                     >
                         Avg Score: {parseInt(globalStats?.avgScore as any)}
@@ -174,7 +175,7 @@ export default function MiningStrategy({
                     />
 
                     {isUpdatePending ? (
-                        <QButton
+                        <QButtonSimple
                             customCss={{
                                 marginLeft: "10px",
                             }}
@@ -182,7 +183,7 @@ export default function MiningStrategy({
                             text="Saving..."
                         />
                     ) : (
-                        <QButton
+                        <QButtonSimple
                             customCss={{
                                 marginLeft: "10px",
                             }}
@@ -200,7 +201,7 @@ export default function MiningStrategy({
                         transform: "scale(1)",
                     }}
                 >
-                    <QLoadingCircle />
+                    Loading...
                 </Box>
             )}
         </Box>

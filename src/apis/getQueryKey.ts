@@ -20,6 +20,10 @@ const queryKeys = {
     miningConfig: () => ["miningConfig"],
     epochData: ({ epoch }: { epoch: number }) => ["epochData", epoch],
     epochsPaying: () => ["epochsPaying"],
+    solutions: () => ["solutions"],
+    cluster: () => ["cluster"],
+    login: () => ["login"],
+    nodes: () => ["nodes"],
 };
 
 export default queryKeys;
