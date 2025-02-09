@@ -108,6 +108,7 @@ export interface Solution {
     nonce: string;
     computorId: string;
     md5Hash: string;
+    submittedAt: number;
 }
 
 export type SolutionPendingToProcess = Solution & {
@@ -133,6 +134,22 @@ export interface SolutionsApiData {
     solutionVerifyingQueue: Solution[];
     solutionClusterVerifyingQueue: Solution[];
     solutionVerifiedQueue: SolutionNetState[];
+}
+
+export interface NodesApiGetData {
+    nodeIps: string[];
+    nodeIpsInactive: string[];
+}
+
+export interface NodesApiPostData {
+    nodeIps: {
+        add: string[];
+        delete: string[];
+    };
+    nodeIpsInactive: {
+        add: string[];
+        delete: string[];
+    };
 }
 
 export type PaymentDbState = "all" | "unpaid" | "paid";

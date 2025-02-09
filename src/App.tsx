@@ -15,6 +15,7 @@ import GrainRoundedIcon from "@mui/icons-material/GrainRounded";
 import SolutionsManager from "./pages/SolutionsManager/SolutionsManager";
 import ClusterManager from "./pages/ClusterManager/ClusterManager";
 import AdminPanelSettingsRoundedIcon from "@mui/icons-material/AdminPanelSettingsRounded";
+import ComputerRoundedIcon from "@mui/icons-material/ComputerRounded";
 import {
     Navigate,
     Route,
@@ -24,6 +25,7 @@ import {
 } from "react-router";
 import Login from "./pages/Login/Login";
 import { Storage } from "./utils/storage";
+import NodeManager from "./pages/NodeManager/NodeManager";
 function App() {
     let [showSnackbar, setShowSnackbar] = useState(false);
     let [snackbarMessage, setSnackbarMessage] = useState("");
@@ -107,6 +109,10 @@ function App() {
                                 icon: ElectricalServicesRoundedIcon,
                             },
                             {
+                                text: "Node Manager",
+                                icon: ComputerRoundedIcon,
+                            },
+                            {
                                 text: "Login",
                                 icon: AdminPanelSettingsRoundedIcon,
                             },
@@ -174,6 +180,10 @@ function App() {
                             <Route
                                 path="cluster-manager"
                                 element={<ClusterManager />}
+                            />
+                            <Route
+                                path="node-manager"
+                                element={<NodeManager />}
                             />
                             <Route
                                 path="*"

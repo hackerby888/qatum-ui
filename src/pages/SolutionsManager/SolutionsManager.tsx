@@ -17,6 +17,7 @@ function StatusDot({ status }: { status: boolean }) {
                 height: "8px",
                 borderRadius: "50%",
                 backgroundColor: status ? "var(--q-main-color)" : "#ccc",
+                boxShadow: status ? "var(--q-main-color) 0px 0px 2px" : "",
             }}
         ></Box>
     );
@@ -28,6 +29,7 @@ const sortMap = {
     nonce: "asc",
     resultScore: "asc",
     isWritten: "asc",
+    submittedAt: "asc",
 };
 
 interface SortMap {
@@ -36,6 +38,7 @@ interface SortMap {
     nonce: "asc" | "desc";
     resultScore: "asc" | "desc";
     isWritten: "asc" | "desc";
+    submittedAt: "asc" | "desc";
 }
 
 export default function SolutionsManager() {
@@ -292,6 +295,8 @@ export default function SolutionsManager() {
                         <Box
                             sx={{
                                 width: "3%",
+                                display: "flex",
+                                alignItems: "center",
                             }}
                         >
                             #
@@ -368,6 +373,24 @@ export default function SolutionsManager() {
                             />
                         </Box>
                         <Box
+                            onClick={() => sort("submittedAt")}
+                            sx={{
+                                width: "15%",
+                                paddingLeft: "5px",
+                                display: "flex",
+                                alignItems: "center",
+                                cursor: "pointer",
+                                "&:hover": { color: "var(--q-main-color)" },
+                                userSelect: "none",
+                            }}
+                        >
+                            Submitted At{" "}
+                            <FilterListRoundedIcon
+                                sx={{ marginLeft: "3px", fontSize: "1rem" }}
+                                fontSize="small"
+                            />
+                        </Box>
+                        <Box
                             onClick={() => sort("isWritten")}
                             sx={{
                                 flex: 1,
@@ -376,6 +399,9 @@ export default function SolutionsManager() {
                                 cursor: "pointer",
                                 "&:hover": { color: "var(--q-main-color)" },
                                 userSelect: "none",
+                                overflow: "auto",
+                                textAlign: "center",
+                                alignItems: "center",
                             }}
                         >
                             Is Share / Is Solution / Is Written{" "}
@@ -458,6 +484,24 @@ export default function SolutionsManager() {
                                             ? (solution as SolutionNetState)
                                                   .resultScore
                                             : "N/A"}
+                                    </Box>
+                                    <Box
+                                        className="jura-font"
+                                        sx={{
+                                            width: "15%",
+                                            paddingLeft: "5px",
+                                            display: "flex",
+                                            alignItems: "center",
+                                            cursor: "pointer",
+                                            "&:hover": {
+                                                color: "var(--q-main-color)",
+                                            },
+                                            userSelect: "none",
+                                        }}
+                                    >
+                                        {new Date(
+                                            solution.submittedAt
+                                        ).toLocaleString()}
                                     </Box>
                                     <Box
                                         sx={{

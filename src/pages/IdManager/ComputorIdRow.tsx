@@ -333,6 +333,9 @@ export default memo(function ComputorIdRow({
                     className="jura-font"
                     sx={{
                         width: "15%",
+                        fontWeight: !isNaN(data?.targetScore as number)
+                            ? "bold"
+                            : "normal",
                     }}
                 >
                     {backupWorkersForDelete[data.id] || data.workers}
@@ -341,6 +344,9 @@ export default memo(function ComputorIdRow({
                     className="jura-font"
                     sx={{
                         width: "20%",
+                        fontWeight: !isNaN(data?.targetScore as number)
+                            ? "bold"
+                            : "normal",
                     }}
                 >
                     {data.totalHashrate || 0} It/s
