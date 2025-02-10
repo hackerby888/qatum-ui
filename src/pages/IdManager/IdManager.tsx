@@ -159,12 +159,6 @@ export default memo(function IdManager() {
 
     // let numberOfDeletedIds = ids?.filter((id) => id.workers === -1).length;
     let lastElementIndex = -1;
-    for (let i = ids?.length - 1; i >= 0; i--) {
-        if (ids[i].workers !== -1) {
-            lastElementIndex = i;
-            break;
-        }
-    }
 
     console.log(ids);
 
@@ -172,10 +166,6 @@ export default memo(function IdManager() {
         if (ids && !lastComputorIdData.length) {
             lastComputorIdData = structuredClone(ids);
             console.log("lastComputorIdData", lastComputorIdData);
-
-            if (ids.length <= 1) {
-                handleAddNewId();
-            }
         }
     }, [ids]);
 
@@ -338,8 +328,7 @@ export default memo(function IdManager() {
                         <Box
                             sx={{
                                 width: "100%",
-                                maxHeight: "70vh",
-                                overflowY: "auto",
+                                overflow: "visible",
                             }}
                         >
                             {isFetching ? (
