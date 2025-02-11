@@ -24,6 +24,7 @@ const queryKeys = {
     cluster: () => ["cluster"],
     login: () => ["login"],
     nodes: () => ["nodes"],
+    difficulty: () => ["difficulty"],
 };
 
 export default queryKeys;

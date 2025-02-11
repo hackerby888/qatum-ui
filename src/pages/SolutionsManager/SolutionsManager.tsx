@@ -8,6 +8,7 @@ import { SolutionNetState, SolutionsApiData } from "@/types";
 import { useState } from "react";
 import FilterListRoundedIcon from "@mui/icons-material/FilterListRounded";
 import { useQueryClient } from "@tanstack/react-query";
+import DifficultyConfig from "./DifficultyConfig";
 
 function StatusDot({ status }: { status: boolean }) {
     return (
@@ -94,10 +95,12 @@ export default function SolutionsManager() {
                 paddingTop: "30px",
             }}
         >
+            <DifficultyConfig />
+
             <Box>
                 <Box
                     sx={{
-                        paddingBottom: "10px",
+                        paddingY: "10px",
                         width: "100%",
                         display: "flex",
                         justifyContent: "center",
