@@ -166,6 +166,7 @@ export default function SolutionsManager() {
                                 },
                             ].map((item) => (
                                 <Box
+                                    key={item.text}
                                     className="jura-font"
                                     sx={{
                                         paddingY: "5px",

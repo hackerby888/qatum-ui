@@ -56,7 +56,7 @@ export default function MaterialUIInput({
             type={type}
             onKeyDown={onKeydown}
             onChange={onChange}
-            value={value}
+            value={value || ""}
             sx={{
                 ...customCss,
             }}
