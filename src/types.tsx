@@ -134,6 +134,7 @@ export interface SolutionsApiData {
     solutionVerifyingQueue: Solution[];
     solutionClusterVerifyingQueue: Solution[];
     solutionVerifiedQueue: SolutionNetState[];
+    solutionsToSubmitQueue: Solution[];
 }
 
 export interface NodesApiGetData {

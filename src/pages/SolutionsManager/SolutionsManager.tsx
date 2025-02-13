@@ -87,6 +87,8 @@ export default function SolutionsManager() {
         (sol) => (sol as SolutionNetState).isWritten
     ).length;
 
+    let numberOfSubmittingSolution = data?.solutionsToSubmitQueue.length;
+
     let queryClient = useQueryClient();
 
     return (
@@ -150,6 +152,10 @@ export default function SolutionsManager() {
                                     value: `${
                                         data?.solutionVerifiedQueue.length || 0
                                     } / ${numberOfIsShareSolution} / ${numberOfIsSolutionSolution} / ${numberOfIsWrittenSolution}`,
+                                },
+                                {
+                                    text: "Solution To Submit",
+                                    value: numberOfSubmittingSolution || 0,
                                 },
                                 {
                                     text: "Total Solutions Received",
