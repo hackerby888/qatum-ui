@@ -111,7 +111,7 @@ export default function DifficultyConfig() {
                         customCss={{
                             width: "100%",
                         }}
-                        label="Max Solutions Difference Between Ids"
+                        label="Net Difficulty"
                     />
 
                     {isUpdatePending ? (

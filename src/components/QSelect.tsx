@@ -1,7 +1,7 @@
 import { Theme } from "@emotion/react";
 import { Box, SxProps } from "@mui/material";
 import { QSelectOptions } from "../types";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ArrowDropDownRoundedIcon from "@mui/icons-material/ArrowDropDownRounded";
 
 export default function QSelect({
@@ -25,6 +25,14 @@ export default function QSelect({
             options.find((option) => option.isDefault) ||
             options[0]
     );
+
+    useEffect(() => {
+        if (selected !== value) {
+            setSelected(
+                options.find((option) => option.value === value) || selected
+            );
+        }
+    });
 
     return (
         //@ts-ignore

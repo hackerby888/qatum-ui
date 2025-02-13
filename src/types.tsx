@@ -153,4 +153,10 @@ export interface NodesApiPostData {
     };
 }
 
+export interface TotalSolutionsStats {
+    totalSolutionsShare: number;
+    totalSolutionsWritten: number;
+    totalSolutionVerified: number;
+}
+
 export type PaymentDbState = "all" | "unpaid" | "paid";

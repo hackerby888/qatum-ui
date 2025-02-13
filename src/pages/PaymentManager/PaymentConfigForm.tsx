@@ -64,10 +64,9 @@ export default function PaymentConfigForm({
         path: "payments/system/epoch",
     }) as any;
 
-    const [epochPaying, setEpochPaying] = useState<readonly EpochChipData[]>([
-        // { key: 123, label: "E123" },
-        // { key: 124, label: "E124" },
-    ]);
+    const [epochPaying, setEpochPaying] = useState<readonly EpochChipData[]>(
+        []
+    );
 
     let [epochAddingPaying, setEpochAddingPaying] = useState<number>(0);
 

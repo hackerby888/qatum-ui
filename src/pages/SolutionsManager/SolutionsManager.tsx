@@ -4,8 +4,14 @@ import { Box } from "@mui/material";
 import queryKeys from "@/apis/getQueryKey";
 import useGeneralGet from "@/apis/useGeneralGet";
 import QSelect from "@/components/QSelect";
-import { SolutionNetState, SolutionsApiData } from "@/types";
-import { useState } from "react";
+import {
+    GlobalStats,
+    QSelectOptions,
+    SolutionNetState,
+    SolutionsApiData,
+    TotalSolutionsStats,
+} from "@/types";
+import { useEffect, useState } from "react";
 import FilterListRoundedIcon from "@mui/icons-material/FilterListRounded";
 import { useQueryClient } from "@tanstack/react-query";
 import DifficultyConfig from "./DifficultyConfig";
@@ -43,9 +49,26 @@ interface SortMap {
 }
 
 export default function SolutionsManager() {
+    let [selectedEpoch, setSelectedEpoch] = useState<number>(0);
+
+    let {
+        data: globalStats,
+        isFetching: isGlobalStatsFetching,
+    }: {
+        data: GlobalStats;
+        isFetching: boolean;
+    } = useGeneralGet({
+        path: "globalStats",
+        queryKey: queryKeys["globalStats"](),
+    }) as any;
+
     let { data, isFetching } = useGeneralGet<SolutionsApiData>({
-        queryKey: queryKeys["solutions"](),
+        queryKey: queryKeys["solutions"](selectedEpoch),
         path: "solutions",
+        enabled: !isNaN(globalStats?.epoch) && selectedEpoch !== 0,
+        reqQuery: {
+            epoch: selectedEpoch,
+        },
     });
 
     let [selectedSolution, setSelectedSolution] =
@@ -69,27 +92,61 @@ export default function SolutionsManager() {
         });
         //@ts-ignore
         sortMap[key] = sortMap[key] === "asc" ? "desc" : "asc";
-        queryClient.setQueryData(queryKeys["solutions"](), {
+        queryClient.setQueryData(queryKeys["solutions"](selectedEpoch), {
             ...data,
             [selectedSolution]: newArr,
         });
     };
 
-    let numberOfIsShareSolution = data?.solutionVerifiedQueue.filter(
-        (sol) => (sol as SolutionNetState).isShare
-    ).length;
+    let prepareLast100Epochs = () => {
+        let epochs: {
+            text: string;
+            value: number;
+        }[] = [];
+        if (!globalStats) return epochs;
+        for (let i = 0; i < 100; i++) {
+            epochs.push({
+                text: `E${globalStats.epoch - i}`,
+                value: globalStats.epoch - i,
+            });
+        }
+        return epochs;
+    };
 
-    let numberOfIsSolutionSolution = data?.solutionVerifiedQueue.filter(
-        (sol) => (sol as SolutionNetState).isSolution
-    ).length;
+    const handleOnChangeEpoch = (option: QSelectOptions) => {
+        setSelectedEpoch(option.value);
+    };
 
-    let numberOfIsWrittenSolution = data?.solutionVerifiedQueue.filter(
-        (sol) => (sol as SolutionNetState).isWritten
-    ).length;
+    let isFetchedFromDb = selectedEpoch < globalStats?.epoch;
 
-    let numberOfSubmittingSolution = data?.solutionsToSubmitQueue.length;
+    let numberOfIsShareSolution = isFetchedFromDb
+        ? (data as unknown as TotalSolutionsStats)?.totalSolutionsShare
+        : data?.solutionVerifiedQueue.filter(
+              (sol) => (sol as SolutionNetState).isShare
+          ).length;
+
+    let numberOfIsSolutionSolution = isFetchedFromDb
+        ? (data as unknown as TotalSolutionsStats)?.totalSolutionVerified
+        : data?.solutionVerifiedQueue.filter(
+              (sol) => (sol as SolutionNetState).isSolution
+          ).length;
+
+    let numberOfIsWrittenSolution = isFetchedFromDb
+        ? (data as unknown as TotalSolutionsStats)?.totalSolutionsWritten
+        : data?.solutionVerifiedQueue.filter(
+              (sol) => (sol as SolutionNetState).isWritten
+          ).length;
+
+    let numberOfSubmittingSolution = data?.solutionsToSubmitQueue?.length;
 
     let queryClient = useQueryClient();
+
+    useEffect(() => {
+        if (globalStats) {
+            console.log("globalStats", globalStats);
+            setSelectedEpoch(globalStats.epoch);
+        }
+    }, [globalStats, isGlobalStatsFetching]);
 
     return (
         <Box
@@ -109,6 +166,38 @@ export default function SolutionsManager() {
                     }}
                 >
                     General Stats
+                </Box>{" "}
+                <Box
+                    sx={{
+                        display: "flex",
+                        justifyContent: "center",
+                        width: "100%",
+                    }}
+                >
+                    {globalStats ? (
+                        <QSelect
+                            value={selectedEpoch}
+                            onSelected={handleOnChangeEpoch}
+                            options={prepareLast100Epochs()}
+                            customCss={{
+                                width: "100px",
+                                borderLeft: "none",
+                                borderRight: "none",
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                paddingBottom: "10px",
+                            }}
+                            isPlaceBottom={true}
+                        />
+                    ) : (
+                        <Skeletons
+                            customCss={{
+                                width: "100px",
+                            }}
+                            row={1}
+                        />
+                    )}{" "}
                 </Box>
                 <Box
                     sx={{
@@ -121,7 +210,7 @@ export default function SolutionsManager() {
                     }}
                 >
                     <Box>General Stats</Box>
-                    {!isFetching ? (
+                    {data && !isFetching ? (
                         <>
                             {" "}
                             {[
@@ -129,28 +218,28 @@ export default function SolutionsManager() {
                                     text: "Solutions Pending To Get In Queue",
                                     value:
                                         data?.solutionsPendingToGetProcessQueue
-                                            .length || 0,
+                                            ?.length || 0,
                                 },
                                 {
                                     text: "Solutions In Queue",
-                                    value: data?.solutionQueue.length || 0,
+                                    value: data?.solutionQueue?.length || 0,
                                 },
                                 {
                                     text: "Solutions Verifying",
                                     value:
-                                        data?.solutionVerifyingQueue.length ||
+                                        data?.solutionVerifyingQueue?.length ||
                                         0,
                                 },
                                 {
                                     text: "Solutions Verifying Cluster",
                                     value:
                                         data?.solutionClusterVerifyingQueue
-                                            .length || 0,
+                                            ?.length || 0,
                                 },
                                 {
                                     text: "Solutions Verified (Total/IsShare/IsSolution/IsWritten)",
                                     value: `${
-                                        data?.solutionVerifiedQueue.length || 0
+                                        data?.solutionVerifiedQueue?.length || 0
                                     } / ${numberOfIsShareSolution} / ${numberOfIsSolutionSolution} / ${numberOfIsWrittenSolution}`,
                                 },
                                 {
@@ -160,15 +249,15 @@ export default function SolutionsManager() {
                                 {
                                     text: "Total Solutions Received",
                                     value:
-                                        (data?.solutionQueue.length || 0) +
-                                        (data?.solutionVerifyingQueue.length ||
+                                        (data?.solutionQueue?.length || 0) +
+                                        (data?.solutionVerifyingQueue?.length ||
                                             0) +
                                         (data?.solutionClusterVerifyingQueue
-                                            .length || 0) +
-                                        (data?.solutionVerifiedQueue.length ||
+                                            ?.length || 0) +
+                                        (data?.solutionVerifiedQueue?.length ||
                                             0) +
                                         (data?.solutionsPendingToGetProcessQueue
-                                            .length || 0),
+                                            ?.length || 0),
                                 },
                             ].map((item) => (
                                 <Box
@@ -421,8 +510,8 @@ export default function SolutionsManager() {
                             />
                         </Box>
                     </Box>
-                    {!false && data ? (
-                        data[selectedSolution].map((solution, index) => {
+                    {data ? (
+                        data[selectedSolution]?.map((solution, index) => {
                             let isVerifiedList =
                                 selectedSolution === "solutionVerifiedQueue";
 
