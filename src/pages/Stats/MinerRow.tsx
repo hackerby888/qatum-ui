@@ -49,7 +49,10 @@ export default function QMinerRow({
                 <Box
                     className="jura-font"
                     sx={{
-                        width: "15%",
+                        width: {
+                            xs: "25%",
+                            md: "15%",
+                        },
                         // borderRight: "1px solid black",
                         paddingLeft: "5px",
                         paddingY: "5px",
@@ -77,16 +80,22 @@ export default function QMinerRow({
                         // borderRight: "1px solid black",
                         paddingLeft: "5px",
                         paddingY: "5px",
+                        display: {
+                            xs: "none",
+                            md: "flex",
+                        },
                     }}
                 >
                     {ms(Date.now() - data.startTimestamp)}
                 </Box>
                 <Box
                     sx={{
-                        width: "10%",
+                        display: "flex",
+                        flex: 1,
                         color: data.isActive ? "var(--q-main-color)" : "red",
                         textAlign: "center",
                         paddingY: "5px",
+                        justifyContent: "center",
                     }}
                 >
                     {data.isActive ? "Active" : "Inactive"}

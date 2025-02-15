@@ -206,7 +206,10 @@ export default function SolutionsManager() {
                         padding: "10px",
                         display: "flex",
                         flexDirection: "column",
-                        width: "60%",
+                        width: {
+                            xs: "100%",
+                            md: "60%",
+                        },
                     }}
                 >
                     <Box>General Stats</Box>

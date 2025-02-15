@@ -299,7 +299,10 @@ export default memo(function ComputorIdRow({
                     <Box
                         className="jura-font"
                         sx={{
-                            width: "33%",
+                            width: {
+                                xs: "auto",
+                                md: "33%",
+                            },
                             overflowX: "auto",
                             marginLeft: "5px",
                         }}
@@ -315,7 +318,10 @@ export default memo(function ComputorIdRow({
                     isPlaceBottom={!isLastRow}
                     options={trueFalseOptions}
                     customCss={{
-                        width: "7%",
+                        width: {
+                            xs: "auto",
+                            md: "7%",
+                        },
                     }}
                 />
                 <QSelect
@@ -326,16 +332,26 @@ export default memo(function ComputorIdRow({
                     isPlaceBottom={!isLastRow}
                     options={trueFalseOptions}
                     customCss={{
-                        width: "12%",
+                        width: {
+                            xs: "auto",
+                            md: "12%",
+                        },
                     }}
                 />
                 <Box
                     className="jura-font"
                     sx={{
-                        width: "15%",
+                        width: {
+                            xs: "auto",
+                            md: "15%",
+                        },
                         fontWeight: !isNaN(data?.targetScore as number)
                             ? "bold"
                             : "normal",
+                        marginX: {
+                            xs: "5px",
+                            md: "0",
+                        },
                     }}
                 >
                     {backupWorkersForDelete[data.id] || data.workers}
@@ -343,7 +359,10 @@ export default memo(function ComputorIdRow({
                 <Box
                     className="jura-font"
                     sx={{
-                        width: "20%",
+                        width: {
+                            xs: "auto",
+                            md: "20%",
+                        },
                         fontWeight: !isNaN(data?.targetScore as number)
                             ? "bold"
                             : "normal",

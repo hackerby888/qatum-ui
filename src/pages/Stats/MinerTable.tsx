@@ -138,7 +138,10 @@ export default function QMinerTable({ wallet }: { wallet: string }) {
                     }
                     sx={{
                         userSelect: "none",
-                        width: "15%",
+                        width: {
+                            xs: "25%",
+                            md: "15%",
+                        },
                         // borderRight: "1px solid black",
                         paddingLeft: "5px",
                         paddingY: "5px",
@@ -179,11 +182,12 @@ export default function QMinerTable({ wallet }: { wallet: string }) {
                     sx={{
                         userSelect: "none",
                         width: "25%",
-                        // borderRight: "1px solid black",
                         paddingLeft: "5px",
                         paddingY: "5px",
-                        display: "flex",
-                        alignItems: "center",
+                        display: {
+                            xs: "none",
+                            md: "flex",
+                        },
                         cursor: "pointer",
                         "&:hover": { color: "var(--q-main-color)" },
                     }}
@@ -198,7 +202,7 @@ export default function QMinerTable({ wallet }: { wallet: string }) {
                     onClick={() => handleSort("isActive")}
                     sx={{
                         userSelect: "none",
-                        width: "10%",
+                        flex: 1,
                         textAlign: "center",
                         paddingY: "5px",
                         display: "flex",

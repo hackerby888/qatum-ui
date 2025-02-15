@@ -125,6 +125,10 @@ export default function MiningStrategy({
                         display: "flex",
                         width: "100%",
                         justifyContent: "center",
+                        flexDirection: {
+                            xs: "column",
+                            md: "row",
+                        },
                     }}
                 >
                     <Box
@@ -147,7 +151,14 @@ export default function MiningStrategy({
                             setHashrateText(e.target.value);
                         }}
                         customCss={{
-                            width: "33%",
+                            width: {
+                                xs: "100%",
+                                md: "33%",
+                            },
+                            marginY: {
+                                xs: "10px",
+                                md: "0",
+                            },
                         }}
                         label="Max It/s Difference Between Ids"
                     />
@@ -158,7 +169,14 @@ export default function MiningStrategy({
                             setSolutionText(e.target.value);
                         }}
                         customCss={{
-                            width: "33%",
+                            width: {
+                                xs: "100%",
+                                md: "33%",
+                            },
+                            marginY: {
+                                xs: "10px",
+                                md: "0",
+                            },
                         }}
                         label="Max Solutions Difference Between Ids"
                     />
@@ -169,7 +187,10 @@ export default function MiningStrategy({
                             setAvgOverRateText(e.target.value);
                         }}
                         customCss={{
-                            width: "10%",
+                            width: {
+                                xs: "100%",
+                                md: "10%",
+                            },
                         }}
                         label="Avg Over Rate"
                     />
@@ -185,7 +206,14 @@ export default function MiningStrategy({
                     ) : (
                         <QButtonSimple
                             customCss={{
-                                marginLeft: "10px",
+                                marginLeft: {
+                                    xs: "0",
+                                    md: "10px",
+                                },
+                                marginY: {
+                                    xs: "10px",
+                                    md: "0",
+                                },
                             }}
                             onClick={handleSave}
                             text="Save"

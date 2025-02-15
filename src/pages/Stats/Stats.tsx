@@ -38,9 +38,7 @@ export default memo(function Stats() {
                 <CentralStats />
                 <GraphStats />
             </Box>
-
             <QMinerTable wallet={wallet} />
-
             <Box
                 sx={{
                     width: "100%",

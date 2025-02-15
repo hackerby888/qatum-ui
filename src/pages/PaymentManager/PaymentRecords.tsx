@@ -64,6 +64,9 @@ export default function PaymentRecords({
 
         sortMap[key] = sortMap[key] === "asc" ? "desc" : "asc";
     };
+
+    let totalReward = payments?.reduce((acc, curr) => acc + curr.reward, 0);
+
     return (
         <Box
             sx={{
@@ -97,44 +100,65 @@ export default function PaymentRecords({
                         display: "flex",
                         justifyContent: "center",
                         alignItems: "center",
+                        flexDirection: "column",
                     }}
                 >
-                    {" "}
+                    <Box
+                        sx={{
+                            width: "100%",
+                            display: "flex",
+                            justifyContent: "flex-start",
+                            alignItems: "flex-start",
+                            flexDirection: "column",
+                        }}
+                    >
+                        <Box>
+                            {" "}
+                            Total Reward :{" "}
+                            <span className="jura-font">{totalReward}</span>
+                        </Box>
+                    </Box>
                     <Box
                         sx={{
                             display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
                         }}
                     >
-                        Show Payment
+                        <Box
+                            sx={{
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
+                            }}
+                        >
+                            Show Payment
+                        </Box>
+                        <QSelect
+                            value={type}
+                            onSelected={(option) => setType(option.value)}
+                            options={[
+                                {
+                                    text: "All",
+                                    value: "all",
+                                    customCss: {},
+                                },
+                                {
+                                    text: "Paid",
+                                    value: "paid",
+                                    customCss: {},
+                                },
+                                {
+                                    text: "Unpaid",
+                                    value: "unpaid",
+                                    customCss: {},
+                                },
+                            ]}
+                            customCss={{
+                                padding: "3px 10px",
+                                borderRadius: "5px",
+                            }}
+                            isPlaceBottom={true}
+                        />
                     </Box>
-                    <QSelect
-                        value={type}
-                        onSelected={(option) => setType(option.value)}
-                        options={[
-                            {
-                                text: "All",
-                                value: "all",
-                                customCss: {},
-                            },
-                            {
-                                text: "Paid",
-                                value: "paid",
-                                customCss: {},
-                            },
-                            {
-                                text: "Unpaid",
-                                value: "unpaid",
-                                customCss: {},
-                            },
-                        ]}
-                        customCss={{
-                            padding: "3px 10px",
-                            borderRadius: "5px",
-                        }}
-                        isPlaceBottom={true}
-                    />
                 </Box>
 
                 <Box

@@ -401,6 +401,10 @@ export default function PaymentConfigForm({
                     display: "flex",
                     width: "100%",
                     justifyContent: "center",
+                    flexDirection: {
+                        xs: "column",
+                        md: "row",
+                    },
                 }}
             >
                 <Box
@@ -503,7 +507,14 @@ export default function PaymentConfigForm({
                             value={epochData?.solutionValue}
                             label="Qubic Per Solution"
                             customCss={{
-                                width: "33%",
+                                width: {
+                                    xs: "100%",
+                                    md: "33%",
+                                },
+                                marginY: {
+                                    xs: "10px",
+                                    md: "0",
+                                },
                             }}
                         />
                         <MaterialUIInput
@@ -513,7 +524,14 @@ export default function PaymentConfigForm({
                             value={epochData?.shareValue}
                             label="Qubic Per Share"
                             customCss={{
-                                width: "33%",
+                                width: {
+                                    xs: "100%",
+                                    md: "33%",
+                                },
+                                marginY: {
+                                    xs: "10px",
+                                    md: "0",
+                                },
                             }}
                         />
                     </React.Fragment>
@@ -543,7 +561,10 @@ export default function PaymentConfigForm({
                     <QButtonSimple
                         onClick={handleOnSave}
                         customCss={{
-                            marginLeft: "10px",
+                            marginLeft: {
+                                xs: "0px",
+                                md: "10px",
+                            },
                         }}
                         text="Save"
                     />
@@ -551,7 +572,10 @@ export default function PaymentConfigForm({
                     <QButtonSimple
                         isDisabled={true}
                         customCss={{
-                            marginLeft: "10px",
+                            marginLeft: {
+                                xs: "0px",
+                                md: "10px",
+                            },
                         }}
                         text="Saving..."
                     />

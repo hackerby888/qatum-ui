@@ -224,20 +224,31 @@ export default memo(function IdManager() {
                                 display: "flex",
                                 width: "100%",
                                 paddingY: "10px",
+                                overflowX: "auto",
                             }}
                         >
                             {" "}
                             <Box
                                 onClick={() => sort("id")}
                                 sx={{
-                                    width: "33%",
-                                    overflowX: "hidden",
+                                    width: {
+                                        xs: "auto",
+                                        md: "33%",
+                                    },
+                                    overflowX: {
+                                        xs: "visible",
+                                        md: "hidden",
+                                    },
                                     marginLeft: "5px",
                                     display: "flex",
                                     alignItems: "center",
                                     cursor: "pointer",
                                     "&:hover": { color: "var(--q-main-color)" },
                                     userSelect: "none",
+                                    paddingX: {
+                                        xs: "10px",
+                                        md: "0px",
+                                    },
                                 }}
                             >
                                 ID
@@ -249,13 +260,20 @@ export default memo(function IdManager() {
                             <Box
                                 onClick={() => sort("mining")}
                                 sx={{
-                                    width: "7%",
+                                    width: {
+                                        xs: "auto",
+                                        md: "7%",
+                                    },
                                     display: "flex",
                                     alignItems: "center",
                                     justifyContent: "center",
                                     cursor: "pointer",
                                     "&:hover": { color: "var(--q-main-color)" },
                                     userSelect: "none",
+                                    paddingX: {
+                                        xs: "10px",
+                                        md: "0px",
+                                    },
                                 }}
                             >
                                 Active
@@ -267,13 +285,20 @@ export default memo(function IdManager() {
                             <Box
                                 onClick={() => sort("followingAvgScore")}
                                 sx={{
-                                    width: "12%",
+                                    width: {
+                                        xs: "auto",
+                                        md: "12%",
+                                    },
                                     display: "flex",
                                     alignItems: "center",
                                     justifyContent: "center",
                                     cursor: "pointer",
                                     "&:hover": { color: "var(--q-main-color)" },
                                     userSelect: "none",
+                                    paddingX: {
+                                        xs: "10px",
+                                        md: "0px",
+                                    },
                                 }}
                             >
                                 Follow Avg
@@ -285,12 +310,19 @@ export default memo(function IdManager() {
                             <Box
                                 onClick={() => sort("workers")}
                                 sx={{
-                                    width: "15%",
+                                    width: {
+                                        xs: "auto",
+                                        md: "15%",
+                                    },
                                     display: "flex",
                                     alignItems: "center",
                                     cursor: "pointer",
                                     "&:hover": { color: "var(--q-main-color)" },
                                     userSelect: "none",
+                                    paddingX: {
+                                        xs: "10px",
+                                        md: "0px",
+                                    },
                                 }}
                             >
                                 Workers
@@ -302,12 +334,19 @@ export default memo(function IdManager() {
                             <Box
                                 onClick={() => sort("totalHashrate")}
                                 sx={{
-                                    width: "20%",
+                                    width: {
+                                        xs: "auto",
+                                        md: "20%",
+                                    },
                                     display: "flex",
                                     alignItems: "center",
                                     cursor: "pointer",
                                     "&:hover": { color: "var(--q-main-color)" },
                                     userSelect: "none",
+                                    paddingX: {
+                                        xs: "10px",
+                                        md: "0px",
+                                    },
                                 }}
                             >
                                 Total Performance
@@ -320,6 +359,12 @@ export default memo(function IdManager() {
                                 sx={{
                                     flex: 1,
                                     userSelect: "none",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    paddingX: {
+                                        xs: "10px",
+                                        md: "0px",
+                                    },
                                 }}
                             >
                                 Action
