@@ -47,6 +47,18 @@ export default function NodeManager() {
         });
     };
 
+    const handleAddAllInactiveNodesToActive = () => {
+        //add all inactive nodes to active
+        let nodeIps = [...(data?.nodeIps || [])];
+        let nodeIpsInactive = [...(data?.nodeIpsInactive || [])];
+        nodeIps.push(...nodeIpsInactive);
+        nodeIpsInactive = [];
+        queryClient.setQueryData(queryKeys["nodes"](), {
+            nodeIps,
+            nodeIpsInactive,
+        });
+    };
+
     const handleRemoveIp = (
         ip: string,
         from: "active" | "inactive" = "active"
@@ -152,6 +164,9 @@ export default function NodeManager() {
                             >
                                 {" "}
                                 <QButtonSimple
+                                    onDoubleClick={
+                                        handleAddAllInactiveNodesToActive
+                                    }
                                     onClick={() => {
                                         handleAddIp(activeIpText, "active");
                                         setActiveIpText("");

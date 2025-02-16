@@ -7,6 +7,7 @@ export default function QButtonSimple({
     onClick,
     children,
     isDisabled,
+    onDoubleClick,
 }: {
     text: string;
     customCss?: SxProps<Theme>;
@@ -15,10 +16,12 @@ export default function QButtonSimple({
     children?: React.ReactNode;
     effect2dHoverColor?: string;
     isDisabled?: boolean;
+    onDoubleClick?: () => void;
 }) {
     return (
         <Box
             onClick={isDisabled ? () => {} : onClick}
+            onDoubleClick={isDisabled ? () => {} : onDoubleClick}
             sx={{
                 opacity: isDisabled ? 0.5 : 1,
                 userSelect: "none",
