@@ -64,8 +64,35 @@ export default function Header() {
                         display: "flex",
                         justifyContent: "flex-end",
                         cursor: "pointer",
+                        alignItems: "center",
                     }}
                 >
+                    <Box
+                        onClick={() =>
+                            handleOpenNewTab(
+                                "https://github.com/hackerby888/qatum-protocol/blob/main/docs/how-to-interact-with-qatum.md"
+                            )
+                        }
+                        className="jura-font"
+                        sx={{
+                            userSelect: "none",
+                            cursor: "pointer",
+                            marginRight: {
+                                xs: "0px",
+                                md: "20px",
+                            },
+                            fontWeight: "bold",
+                            fontSize: ".9rem",
+                            padding: "5px",
+                            borderRadius: "5px",
+                            "&:hover": {
+                                background: "var(--q-border-color)",
+                            },
+                            display: { xs: "none", md: "block" },
+                        }}
+                    >
+                        How to connect your custom miner?
+                    </Box>
                     <img
                         onClick={() =>
                             handleOpenNewTab("https://discord.gg/sVwMPMd8Ve")
@@ -73,6 +100,18 @@ export default function Header() {
                         width={"24"}
                         height={"24"}
                         src="/discord.svg"
+                        alt=""
+                        style={{ marginRight: "10px" }}
+                    />
+                    <img
+                        onClick={() =>
+                            handleOpenNewTab(
+                                "https://github.com/hackerby888/qatum-protocol"
+                            )
+                        }
+                        width={"24"}
+                        height={"24"}
+                        src="/github.svg"
                         alt=""
                     />
                 </Box>
