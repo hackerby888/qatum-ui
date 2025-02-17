@@ -3,17 +3,13 @@ import useGeneralGet from "@/apis/useGeneralGet";
 import QDivider from "@/components/QDivider";
 import { SystemStatusApi } from "@/types";
 import { Box } from "@mui/material";
-import { useQueryClient } from "@tanstack/react-query";
 import ms from "ms";
-import { useEffect } from "react";
 
 export default function Status() {
-    let { data, refetch } = useGeneralGet<SystemStatusApi>({
+    let { data } = useGeneralGet<SystemStatusApi>({
         queryKey: queryKeys["status"](),
         path: "status",
     });
-
-    let queryClient = useQueryClient();
 
     return (
         <Box
