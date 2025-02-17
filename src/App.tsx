@@ -16,6 +16,7 @@ import SolutionsManager from "./pages/SolutionsManager/SolutionsManager";
 import ClusterManager from "./pages/ClusterManager/ClusterManager";
 import AdminPanelSettingsRoundedIcon from "@mui/icons-material/AdminPanelSettingsRounded";
 import ComputerRoundedIcon from "@mui/icons-material/ComputerRounded";
+import EditAttributesIcon from "@mui/icons-material/EditAttributes";
 import {
     Navigate,
     Route,
@@ -26,6 +27,7 @@ import {
 import Login from "./pages/Login/Login";
 import { Storage } from "./utils/storage";
 import NodeManager from "./pages/NodeManager/NodeManager";
+import Status from "./pages/Status/Status";
 function App() {
     let [showSnackbar, setShowSnackbar] = useState(false);
     let [snackbarMessage, setSnackbarMessage] = useState("");
@@ -113,6 +115,10 @@ function App() {
                                 icon: ComputerRoundedIcon,
                             },
                             {
+                                text: "Status",
+                                icon: EditAttributesIcon,
+                            },
+                            {
                                 text: "Login",
                                 icon: AdminPanelSettingsRoundedIcon,
                             },
@@ -185,6 +191,7 @@ function App() {
                                 path="node-manager"
                                 element={<NodeManager />}
                             />
+                            <Route path="/status" element={<Status />} />
                             <Route
                                 path="*"
                                 element={<Navigate to="/stats" />}

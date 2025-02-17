@@ -25,6 +25,7 @@ const queryKeys = {
     login: () => ["login"],
     nodes: () => ["nodes"],
     difficulty: () => ["difficulty"],
+    status: () => ["status"],
 };
 
 export default queryKeys;

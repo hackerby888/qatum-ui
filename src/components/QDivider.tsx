@@ -1,6 +1,6 @@
 import { Box } from "@mui/material";
 
-export default function Divider({ type = "dotted" }) {
+export default function QDivider({ type = "dotted" }) {
     return (
         <Box
             sx={{
