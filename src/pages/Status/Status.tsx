@@ -45,6 +45,14 @@ export default function Status() {
                             text: "Last Fetch Score Time",
                             value: ms(Date.now() - data.lastFetchScoreTime),
                         },
+                        {
+                            text: "Last Highest Tick From Current Nodes",
+                            value: data.lastHighestTickFromCurrentNodes,
+                        },
+                        {
+                            text: "Last Highest Tick From Explorer",
+                            value: data.lastHighestTickFromExplorer,
+                        },
                     ].map((item) => (
                         <Box
                             key={item.text}
