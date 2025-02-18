@@ -15,20 +15,7 @@ import { useEffect, useState } from "react";
 import FilterListRoundedIcon from "@mui/icons-material/FilterListRounded";
 import { useQueryClient } from "@tanstack/react-query";
 import DifficultyConfig from "./DifficultyConfig";
-
-function StatusDot({ status }: { status: boolean }) {
-    return (
-        <Box
-            sx={{
-                width: "8px",
-                height: "8px",
-                borderRadius: "50%",
-                backgroundColor: status ? "var(--q-main-color)" : "#ccc",
-                boxShadow: status ? "var(--q-main-color) 0px 0px 2px" : "",
-            }}
-        ></Box>
-    );
-}
+import StatusDot from "@/components/StatusDot";
 
 const sortMap = {
     computorId: "asc",

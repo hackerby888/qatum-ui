@@ -95,7 +95,7 @@ export default function Header() {
                     </Box>
                     <img
                         onClick={() =>
-                            handleOpenNewTab("https://discord.gg/sVwMPMd8Ve")
+                            handleOpenNewTab("https://discord.com/invite/qubic")
                         }
                         width={"24"}
                         height={"24"}

@@ -6,6 +6,7 @@ import GraphStats from "./GraphStats";
 import Payments from "./Payments";
 import { memo, useState } from "react";
 import WalletInput from "./WalletInput";
+import StatusDot from "@/components/StatusDot";
 
 export default memo(function Stats() {
     let [wallet, setWallet] = useState(localStorage.getItem("wallet") || "");
@@ -22,7 +23,27 @@ export default memo(function Stats() {
                 paddingTop: "20px",
             }}
         >
-            {/* <QLoading /> */}
+            <Box
+                className="jura-font"
+                sx={{
+                    background: "var(--q-background-color)",
+                    width: "fit-content",
+                    padding: "5px",
+                    borderRadius: "5px",
+                    display: "flex",
+                    alignItems: "center",
+                }}
+            >
+                <StatusDot status={true} />{" "}
+                <Box
+                    sx={{
+                        marginLeft: "5px",
+                    }}
+                    className="jura-font"
+                >
+                    server.qatum.org:7777
+                </Box>
+            </Box>
             <WalletInput initialValue={wallet} onCommit={handleOnSaveWallet} />
             <Box
                 id="stats-main-wrapper"

@@ -11,48 +11,49 @@ export default function NevermineBanner() {
                 width: "100%",
                 display: "flex",
                 flexDirection: "column",
-                //  boxShadow: "0px 0px 5px 0px #ccc",
                 border: "1px solid var(--q-border-color)",
                 borderRadius: "5px",
                 marginRight: "10px",
-                flex: 1,
-                background: "linear-gradient(45deg,#642cec,#2c82ec)",
+                background:
+                    "linear-gradient(45deg,rgba(139, 249, 232, 0.1),rgba(140, 200, 250, 0.1))",
                 marginTop: "10px",
+                flex: 1,
             }}
         >
             <Box
                 sx={{
-                    color: "white",
                     fontSize: "1.2rem",
                     paddingTop: "10px",
                     paddingLeft: "10px",
                 }}
             >
-                Nevermine.io
+                Qubic
             </Box>
             <Box
                 className="jura-font"
                 sx={{
                     paddingLeft: "10px",
-                    color: "white",
                     opacity: 0.9,
                 }}
             >
-                Embark on crypto mining with us to revolutionize the world and
-                earn cryptocurrency, together we can shape the future.
+                Qubic is a high-performance Layer 1 blockchain enabling instant
+                finality, feeless transactions, and the fastest smart contracts.
+                Built on Useful Proof of Work (UPoW), it’s the first to
+                integrate artificial neural networks for the future of
+                Artificial General Intelligence.
             </Box>
             <Box
                 className="jura-font"
                 sx={{
                     paddingLeft: "10px",
-                    color: "white",
+
                     opacity: 0.9,
                     paddingTop: "10px",
                     fontSize: ".9rem",
                     fontWeight: "bold",
                 }}
             >
-                Reliable • Secure • Profitable - Mining Easy As Never Mine
+                FORGET WHAT YOU KNOW
             </Box>
             <Box
                 sx={{
@@ -66,7 +67,7 @@ export default function NevermineBanner() {
                 }}
             >
                 <QButtonSimple
-                    onClick={() => handleOpenNewTab("https://nevermine.io/")}
+                    onClick={() => handleOpenNewTab("https://qubic.org/")}
                     customCss={{
                         width: "fit-content",
                         background: "white",
@@ -78,7 +79,7 @@ export default function NevermineBanner() {
                         fontSize: ".9rem",
                         marginTop: "10px",
                     }}
-                    text="Check Out"
+                    text="Learn More"
                 />
             </Box>
         </Box>

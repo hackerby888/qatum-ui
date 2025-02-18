@@ -4,7 +4,7 @@ import Divider from "@/components/QDivider";
 import Skeletons from "@/components/Skeletons";
 import { GlobalStats, QWorkerApi } from "@/types";
 import { Box } from "@mui/material";
-import NevermineBanner from "./NevermineBanner";
+import NevermineBanner from "./QubicBanner";
 
 export default function FinalStats({ wallet }: { wallet: string }) {
     let {

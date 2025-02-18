@@ -8,6 +8,7 @@ import queryKeys from "@/apis/getQueryKey";
 import CreditScoreRoundedIcon from "@mui/icons-material/CreditScoreRounded";
 import { v4 } from "uuid";
 import Skeletons from "@/components/Skeletons";
+import { useEffect, useRef } from "react";
 const PAYMENTS_LIMIT = 20;
 export default function Payments({ wallet }: { wallet: string }) {
     let {
@@ -34,6 +35,8 @@ export default function Payments({ wallet }: { wallet: string }) {
         enabled: !!wallet,
     }) as any;
 
+    let wrapperRef = useRef<HTMLDivElement>(null);
+
     const handleOpenNewTab = (url: string) => {
         window.open(url, "_blank");
     };
@@ -41,9 +44,15 @@ export default function Payments({ wallet }: { wallet: string }) {
     let isLastPage =
         payments?.pages[payments?.pages.length - 1].length < PAYMENTS_LIMIT;
 
-    console.log("payments", error);
+    useEffect(() => {
+        if (wrapperRef.current && !payments)
+            wrapperRef.current.style.maxHeight =
+                wrapperRef.current?.scrollHeight + "px";
+    });
+
     return (
         <Box
+            ref={wrapperRef}
             sx={{
                 width: {
                     xs: "100%",
@@ -52,14 +61,20 @@ export default function Payments({ wallet }: { wallet: string }) {
                 display: "flex",
                 flexDirection: "column",
                 overflowY: "auto",
-                maxHeight: "300px",
-                //     boxShadow: "0px 0px 5px 0px #ccc",
                 border: "1px solid var(--q-border-color)",
                 borderRadius: "5px",
                 padding: "10px",
                 marginTop: {
                     xs: "10px",
                     md: "0",
+                },
+                flex: {
+                    xs: "0 1 auto",
+                    md: 1,
+                },
+                height: {
+                    xs: "30vh",
+                    md: "auto",
                 },
             }}
         >
