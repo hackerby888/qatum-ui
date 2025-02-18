@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react";
 import "./App.css";
-import { Box, Container, Snackbar } from "@mui/material";
+import { Box, Container } from "@mui/material";
 import QueryStatsRoundedIcon from "@mui/icons-material/QueryStatsRounded";
 import DvrRoundedIcon from "@mui/icons-material/DvrRounded";
 import LocalAtmRoundedIcon from "@mui/icons-material/LocalAtmRounded";
@@ -8,7 +7,6 @@ import Footer from "./components/Footer";
 import IdManager from "./pages/IdManager/IdManager";
 import PaymentManager from "./pages/PaymentManager/PaymentManager";
 import Stats from "./pages/Stats/Stats";
-import useGlobalStore, { GlobalStore } from "./stores/useGlobalStore";
 import Header from "./components/Header";
 import ElectricalServicesRoundedIcon from "@mui/icons-material/ElectricalServicesRounded";
 import GrainRoundedIcon from "@mui/icons-material/GrainRounded";
@@ -28,29 +26,14 @@ import Login from "./pages/Login/Login";
 import { Storage } from "./utils/storage";
 import NodeManager from "./pages/NodeManager/NodeManager";
 import Status from "./pages/Status/Status";
+import QSnackbar from "./components/QSnackbar";
 function App() {
-    let [showSnackbar, setShowSnackbar] = useState(false);
-    let [snackbarMessage, setSnackbarMessage] = useState("");
-    let globalStore: GlobalStore = useGlobalStore();
     const navigate = useNavigate();
     const location = useLocation();
-
-    const handleOnCloseSnackbar = () => {
-        setShowSnackbar(false);
-    };
-
-    const handleOnpenAndSetSnackbar = (message: string) => {
-        setSnackbarMessage(message);
-        setShowSnackbar(true);
-    };
 
     const handleNavigate = (page: string) => {
         navigate(page);
     };
-
-    useEffect(() => {
-        globalStore.setHandleOnpenAndSetSnackbar(handleOnpenAndSetSnackbar);
-    }, []);
 
     return (
         <>
@@ -64,13 +47,7 @@ function App() {
                     flexDirection: "column",
                 }}
             >
-                <Snackbar
-                    open={showSnackbar}
-                    autoHideDuration={5000}
-                    onClose={handleOnCloseSnackbar}
-                    message={snackbarMessage}
-                />
-
+                <QSnackbar />
                 {/* <QDivider py={"5px"} /> */}
 
                 <Box

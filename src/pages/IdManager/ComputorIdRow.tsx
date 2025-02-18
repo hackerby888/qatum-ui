@@ -4,13 +4,13 @@ import { ComputorIdDataApi, QSelectOptions } from "@/types";
 import { memo, useState } from "react";
 import QSelect from "@/components/QSelect";
 import Dialog from "@mui/material/Dialog";
-import Snackbar from "@mui/material/Snackbar";
 import { useQueryClient } from "@tanstack/react-query";
 import QLoadingCircle from "@/components/QLoadingCircle";
 import formatNumber from "@/utils/number";
 import useGeneralGet from "@/apis/useGeneralGet";
 import queryKeys from "@/apis/getQueryKey";
 import QButtonSimple from "@/components/QButtonSimple";
+import useGlobalStore, { GlobalStore } from "@/stores/useGlobalStore";
 
 const trueFalseOptions: QSelectOptions[] = [
     {
@@ -56,11 +56,12 @@ export default memo(function ComputorIdRow({
     index: number;
 }) {
     let globalIndex = index;
-
+    let globalStore: GlobalStore = useGlobalStore();
+    let [internalMining, setInternalMining] = useState(mining);
+    let [internalFollowingAvgScore, setInternalFollowingAvgScore] =
+        useState(followingAvgScore);
     let [idText, setIdText] = useState(data.id);
     let [isOpenningDialog, setIsOpenningDialog] = useState(false);
-    let [showSnackbar, setShowSnackbar] = useState(false);
-    let [snackbarMessage, setSnackbarMessage] = useState("");
     let {
         data: computorIdDetail,
         isFetching: isComputorIdDetailFetching,
@@ -89,7 +90,7 @@ export default memo(function ComputorIdRow({
         option: QSelectOptions,
         field: "mining" | "followingAvgScore"
     ) => {
-        handleOnpenAndSetSnackbar(
+        globalStore.handleOnpenAndSetSnackbar(
             `Set ${field.normalize()} to ${option.text} for id ${idText}`
         );
 
@@ -97,19 +98,20 @@ export default memo(function ComputorIdRow({
             queryKeys["computorIds"]()
         ) as ComputorIdDataApi[];
 
+        currentIds[globalIndex] = structuredClone(currentIds[globalIndex]);
         currentIds[globalIndex][field] = option.value;
         queryClient.setQueryData(queryKeys["computorIds"](), currentIds);
 
+        switch (field) {
+            case "mining":
+                setInternalMining(option.value);
+                break;
+            case "followingAvgScore":
+                setInternalFollowingAvgScore(option.value);
+                break;
+        }
+
         console.log(field, option);
-    };
-
-    const handleOnpenAndSetSnackbar = (message: string) => {
-        setSnackbarMessage(message);
-        setShowSnackbar(true);
-    };
-
-    const handleOnCloseSnackbar = () => {
-        setShowSnackbar(false);
     };
 
     const handleOnDelete = () => {
@@ -269,12 +271,6 @@ export default memo(function ComputorIdRow({
                     </Box>
                 </Box>
             </Dialog>{" "}
-            <Snackbar
-                open={showSnackbar}
-                autoHideDuration={5000}
-                onClose={handleOnCloseSnackbar}
-                message={snackbarMessage}
-            />
             <Box
                 sx={{
                     display: "flex",
@@ -311,7 +307,7 @@ export default memo(function ComputorIdRow({
                     </Box>
                 )}
                 <QSelect
-                    value={mining}
+                    value={internalMining}
                     onSelected={(option) =>
                         handleOnTrueFalseSelect(option, "mining")
                     }
@@ -325,7 +321,7 @@ export default memo(function ComputorIdRow({
                     }}
                 />
                 <QSelect
-                    value={followingAvgScore}
+                    value={internalFollowingAvgScore}
                     onSelected={(option) =>
                         handleOnTrueFalseSelect(option, "followingAvgScore")
                     }

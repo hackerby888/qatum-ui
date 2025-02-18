@@ -5,9 +5,9 @@ import MaterialUIInput from "@/components/MaterialUIInput";
 import QButtonSimple from "@/components/QButtonSimple";
 import { GlobalStats, MiningConfig } from "@/types";
 import { Box } from "@mui/material";
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 
-export default function MiningStrategy({
+export default memo(function MiningStrategy({
     handleOnpenAndSetSnackbar,
 }: {
     handleOnpenAndSetSnackbar: any;
@@ -234,4 +234,4 @@ export default function MiningStrategy({
             )}
         </Box>
     );
-}
+});
