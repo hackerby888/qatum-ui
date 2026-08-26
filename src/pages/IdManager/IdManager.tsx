@@ -85,6 +85,9 @@ export default memo(function IdManager() {
                 bcscore: 0,
                 ip: "",
                 lastUpdateScoreTime: 0,
+                // Not yet known for a row the operator is still typing; the server fills these in.
+                balance: 0,
+                canFundDeposit: true,
                 solutionsFetched: 0,
                 submittedSolutions: {
                     isWrittenToBC: 0,

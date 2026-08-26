@@ -73,6 +73,10 @@ export interface ComputorIdDataApi {
     targetScore: number | undefined;
     ip: string;
     lastUpdateScoreTime: number;
+    // QU held by this identity. Every ant solution it publishes stakes a refundable deposit from
+    // this balance, so an identity that cannot cover one publishes nothing at all.
+    balance: number;
+    canFundDeposit: boolean;
     // we use map for faster access
     submittedSolutions: {
         isWrittenToBC: number;

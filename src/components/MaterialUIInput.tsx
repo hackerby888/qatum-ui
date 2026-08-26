@@ -43,6 +43,7 @@ export default function MaterialUIInput({
     label,
     onKeydown,
     type = "text",
+    isDisabled = false,
 }: {
     value: any;
     onChange?: any;
@@ -50,10 +51,12 @@ export default function MaterialUIInput({
     label?: string;
     onKeydown?: any;
     type?: string;
+    isDisabled?: boolean;
 }) {
     return (
         <CssTextField
             type={type}
+            disabled={isDisabled}
             onKeyDown={onKeydown}
             onChange={onChange}
             value={value || ""}

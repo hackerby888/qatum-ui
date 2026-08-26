@@ -304,6 +304,21 @@ export default memo(function ComputorIdRow({
                         }}
                     >
                         {data.id}
+                        {/* Ant colony: the computor funds a refundable deposit for every solution it
+                            publishes. Below it, nothing this id's workers find can reach the chain. */}
+                        {data.mining && data.canFundDeposit === false ? (
+                            <Box
+                                sx={{
+                                    color: "red",
+                                    fontSize: "0.7rem",
+                                }}
+                                title={`Balance ${formatNumber(
+                                    data.balance
+                                )} QU is below the 1,000,000 QU ant solution deposit`}
+                            >
+                                ⚠ cannot fund deposit ({formatNumber(data.balance)} QU)
+                            </Box>
+                        ) : null}
                     </Box>
                 )}
                 <QSelect
