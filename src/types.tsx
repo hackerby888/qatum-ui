@@ -208,7 +208,21 @@ export interface SystemStatusApi {
     antTaskMismatch: boolean;
     currentAnchor: AntAnchor | null;
     canMineAnt: boolean;
-    currentJob: AntJob | null;
+    // Tree-walking state. `enabled` false means no operator key configured, so the pool mines
+    // depth-1 children from the root only - a working mode, not a fault.
+    antTree: {
+        enabled: boolean;
+        pending: number;
+        computors: Record<
+            string,
+            {
+                nodes: number;
+                bestScore: number | null;
+                maxDepth: number;
+                mismatched: number;
+            }
+        >;
+    };
 }
 
 export type PaymentDbState = "all" | "unpaid" | "paid";

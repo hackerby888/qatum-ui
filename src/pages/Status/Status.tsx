@@ -96,29 +96,39 @@ export default function Status() {
             });
         }
 
-        if (data.currentJob) {
-            const job = data.currentJob;
-            // (0, 4294967295) is the identity's virtual root: a depth-1 child.
-            const isRoot =
-                job.parentTick === 0 &&
-                job.parentSolutionIndexInTick === 4294967295;
-            rows.push(
-                { text: "Current Job", value: job.jobId },
-                {
-                    text: "Job Submit Threshold",
-                    value: job.threshold,
-                },
-                {
-                    text: "Job Parent",
-                    value: isRoot
-                        ? "root (depth 1)"
-                        : `${job.parentTick}:${job.parentSolutionIndexInTick} (score ${job.parentScore})`,
-                },
-                {
-                    text: "Job Age",
-                    value: ms(Date.now() - job.createdAt),
+        const tree = data.antTree;
+        if (tree) {
+            rows.push({
+                text: "Tree Mining",
+                // Without it the pool still mines, just never deeper than a child of the root.
+                value: tree.enabled
+                    ? "on"
+                    : "off — no OPERATOR_SEED, mining from the root only",
+                color: tree.enabled ? undefined : "orange",
+            });
+
+            if (tree.enabled) {
+                rows.push({
+                    text: "Solutions Awaiting Confirmation",
+                    value: tree.pending,
+                });
+
+                for (const [computorId, stats] of Object.entries(
+                    tree.computors
+                )) {
+                    rows.push({
+                        text: `Tree ${computorId.slice(0, 8)}…`,
+                        value:
+                            stats.nodes === 0
+                                ? "no accepted nodes yet — mining from the root"
+                                : `${stats.nodes} nodes, best ${stats.bestScore}, depth ${stats.maxDepth}` +
+                                  (stats.mismatched
+                                      ? ` — ${stats.mismatched} excluded (LUT mismatch)`
+                                      : ""),
+                        color: stats.mismatched ? "red" : undefined,
+                    });
                 }
-            );
+            }
         }
     }
 
