@@ -163,11 +163,52 @@ export interface TotalSolutionsStats {
     totalSolutionVerified: number;
 }
 
+// Per-epoch ant colony parameters, read from the node. They change between epochs, so nothing here
+// is a constant to rely on.
+export interface AntEpochContext {
+    spectrumDigest: string;
+    topologyHash: string;
+    dataHash: string;
+    threshold: number;
+    freshnessWindow: number;
+    solutionCount: number;
+    freeAnnSlotsCount: number;
+    maxChildrenPerParent: number;
+    epoch: number;
+}
+
+// The tick a solution's search is bound to. Only non-empty ticks carry one.
+export interface AntAnchor {
+    tick: number;
+    digest: string;
+}
+
+export interface AntJob {
+    jobId: string;
+    computorId: string;
+    seed: string;
+    anchorTick: number;
+    anchorDigest: string;
+    threshold: number;
+    parentTick: number;
+    parentSolutionIndexInTick: number;
+    parentScore: number;
+    createdAt: number;
+}
+
 export interface SystemStatusApi {
     lastSuccessSyncSeed: number;
     lastFetchScoreTime: number;
     lastHighestTickFromCurrentNodes: number;
     lastHighestTickFromExplorer: number;
+    // Null until the pool has read the epoch context from a node; no work is handed out before then.
+    antContext: AntEpochContext | null;
+    // The node scores against a different bpp9000 task than the one we hold. Hard stop: our scores
+    // could never match, and each submission would cost a computor its deposit.
+    antTaskMismatch: boolean;
+    currentAnchor: AntAnchor | null;
+    canMineAnt: boolean;
+    currentJob: AntJob | null;
 }
 
 export type PaymentDbState = "all" | "unpaid" | "paid";
