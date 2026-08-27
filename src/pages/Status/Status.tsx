@@ -124,6 +124,11 @@ export default function Status() {
                                 : `${stats.nodes} nodes, best ${stats.bestScore}, depth ${stats.maxDepth}` +
                                   (stats.mismatched
                                       ? ` — ${stats.mismatched} excluded (LUT mismatch)`
+                                      : "") +
+                                  // Not a fault: the node keeps only a bounded ANN pool, so there
+                                  // was nothing to compare our copy against.
+                                  (stats.unverified
+                                      ? ` — ${stats.unverified} unverified`
                                       : ""),
                         color: stats.mismatched ? "red" : undefined,
                     });

@@ -220,6 +220,7 @@ export interface SystemStatusApi {
                 bestScore: number | null;
                 maxDepth: number;
                 mismatched: number;
+                unverified: number;
             }
         >;
     };
